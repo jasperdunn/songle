@@ -1,6 +1,6 @@
 {
-  "short_name": "Example app",
-  "name": "Example app",
+  "short_name": "songle",
+  "name": "songle",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
