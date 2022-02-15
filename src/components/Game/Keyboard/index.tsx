@@ -1,21 +1,107 @@
 import { theme } from 'common/theme'
+import { GameContext } from 'components/Game/context'
+import { Note } from 'components/Game/types'
+import { useContext, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 
 export function Keyboard(): JSX.Element {
+  const {
+    currentAttemptIndex,
+    setCurrentAttemptIndex,
+    attempts,
+    setAttempts,
+    melodyLength,
+    numberOfPossibleAttempts,
+  } = useContext(GameContext)
+
+  const currentAttempt = attempts[currentAttemptIndex]
+
+  useEffect(() => {
+    function removeLastNote(): void {
+      setAttempts((state) => {
+        const updatedAttempts = [...state]
+        const updatedAttempt = [...currentAttempt]
+        updatedAttempt.pop()
+
+        updatedAttempts[currentAttemptIndex] = updatedAttempt
+
+        return updatedAttempts
+      })
+    }
+
+    function attemptChallenge(): void {
+      if (
+        currentAttempt.length === melodyLength &&
+        currentAttemptIndex < numberOfPossibleAttempts - 1
+      ) {
+        setCurrentAttemptIndex((index) => index + 1)
+      }
+    }
+
+    function keyDown(this: Document, event: KeyboardEvent): void {
+      if (event.key === 'Backspace' && currentAttempt.length > 0) {
+        event.preventDefault()
+
+        removeLastNote()
+      } else if (event.key === 'Enter') {
+        event.preventDefault()
+
+        attemptChallenge()
+      }
+    }
+
+    document.addEventListener('keydown', keyDown)
+
+    return () => {
+      document.removeEventListener('keydown', keyDown)
+    }
+  }, [
+    currentAttempt,
+    currentAttemptIndex,
+    setAttempts,
+    melodyLength,
+    numberOfPossibleAttempts,
+    setCurrentAttemptIndex,
+  ])
+
+  function addNote(note: Note): void {
+    if (currentAttempt.length < melodyLength) {
+      setAttempts((state) => {
+        const updatedAttempts = [...state]
+        const updatedAttempt = [...currentAttempt]
+        updatedAttempt.push(note)
+
+        updatedAttempts[currentAttemptIndex] = updatedAttempt
+
+        return updatedAttempts
+      })
+    }
+  }
+
   return (
     <Container>
-      <WhiteKey>C</WhiteKey>
-      <BlackKey>C#</BlackKey>
-      <WhiteKey offset>D</WhiteKey>
-      <BlackKey>D#</BlackKey>
-      <WhiteKey offset>E</WhiteKey>
-      <WhiteKey>F</WhiteKey>
-      <BlackKey>F#</BlackKey>
-      <WhiteKey offset>G</WhiteKey>
-      <BlackKey>G#</BlackKey>
-      <WhiteKey offset>A</WhiteKey>
-      <BlackKey>A#</BlackKey>
-      <WhiteKey offset>B</WhiteKey>
+      <WhiteKey onClick={() => addNote('C')}>C</WhiteKey>
+      <BlackKey onClick={() => addNote('C#')}>C#</BlackKey>
+      <WhiteKey onClick={() => addNote('D')} $offset>
+        D
+      </WhiteKey>
+      <BlackKey onClick={() => addNote('D#')}>D#</BlackKey>
+      <WhiteKey onClick={() => addNote('E')} $offset>
+        E
+      </WhiteKey>
+      <WhiteKey onClick={() => addNote('F')}>F</WhiteKey>
+      <BlackKey onClick={() => addNote('F#')}>F#</BlackKey>
+      <WhiteKey onClick={() => addNote('G')} $offset>
+        G
+      </WhiteKey>
+      <BlackKey onClick={() => addNote('G#')}>G#</BlackKey>
+      <WhiteKey onClick={() => addNote('A')} $offset>
+        A
+      </WhiteKey>
+      <BlackKey onClick={() => addNote('A#')}>A#</BlackKey>
+      <WhiteKey onClick={() => addNote('B')} $offset>
+        B
+      </WhiteKey>
     </Container>
   )
 }
@@ -32,7 +118,7 @@ const Key = styled.button`
 `
 
 type WhiteKeyProps = {
-  offset?: boolean
+  $offset?: boolean
 }
 const WhiteKey = styled(Key)<WhiteKeyProps>`
   height: 12.5rem;
@@ -56,8 +142,8 @@ const WhiteKey = styled(Key)<WhiteKeyProps>`
     outline: none;
   }
 
-  ${({ offset }) =>
-    offset &&
+  ${({ $offset }) =>
+    $offset &&
     css`
       margin: 0 0 0 -1rem;
     `}
