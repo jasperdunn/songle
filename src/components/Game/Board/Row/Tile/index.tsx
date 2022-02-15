@@ -12,7 +12,7 @@ export function Tile({ children }: TileProps): JSX.Element {
 const Square = styled.div`
   border: 2px solid gray;
   user-select: none;
-  font-size: 24px;
+  font-size: 16px;
   line-height: 1;
   display: inline-flex;
   justify-content: center;
@@ -26,6 +26,6 @@ const Square = styled.div`
   }
 
   @media ${theme.breakpointUp.mobileLandscape} {
-    font-size: 32px;
+    font-size: 24px;
   }
 `
