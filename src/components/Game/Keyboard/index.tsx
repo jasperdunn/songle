@@ -1,10 +1,18 @@
 import { theme } from 'common/theme'
 import { GameContext } from 'components/Game/context'
+import {
+  ComputerKey,
+  computerKeys,
+  keyUp,
+  playNote,
+} from 'components/Game/Keyboard/utils'
 import { Note } from 'components/Game/types'
 import { useContext, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 
 export function Keyboard(): JSX.Element {
+  const useKeyboard = true
+
   const {
     currentAttemptIndex,
     setCurrentAttemptIndex,
@@ -43,17 +51,24 @@ export function Keyboard(): JSX.Element {
         event.preventDefault()
 
         removeLastNote()
-      } else if (event.key === 'Enter') {
+      } else if (event.key === 'Enter' && !event.repeat) {
         event.preventDefault()
 
         attemptChallenge()
+      } else if (
+        computerKeys.includes(event.key as ComputerKey) &&
+        !event.repeat
+      ) {
+        playNote(event.key as ComputerKey)
       }
     }
 
     document.addEventListener('keydown', keyDown)
+    document.addEventListener('keyup', keyUp)
 
     return () => {
       document.removeEventListener('keydown', keyDown)
+      document.removeEventListener('keyup', keyUp)
     }
   }, [
     currentAttempt,
@@ -80,27 +95,41 @@ export function Keyboard(): JSX.Element {
 
   return (
     <Container>
-      <WhiteKey onClick={() => addNote('C')}>C</WhiteKey>
-      <BlackKey onClick={() => addNote('C#')}>C#</BlackKey>
-      <WhiteKey onClick={() => addNote('D')} $offset>
-        D
+      <WhiteKey id="keyC" onClick={() => addNote('C')}>
+        {useKeyboard ? 'A' : 'C'}
       </WhiteKey>
-      <BlackKey onClick={() => addNote('D#')}>D#</BlackKey>
-      <WhiteKey onClick={() => addNote('E')} $offset>
-        E
+      <BlackKey id="keyC#" onClick={() => addNote('C#')}>
+        {useKeyboard ? 'W' : 'C#'}
+      </BlackKey>
+      <WhiteKey id="keyD" onClick={() => addNote('D')} $offset>
+        {useKeyboard ? 'S' : 'D'}
       </WhiteKey>
-      <WhiteKey onClick={() => addNote('F')}>F</WhiteKey>
-      <BlackKey onClick={() => addNote('F#')}>F#</BlackKey>
-      <WhiteKey onClick={() => addNote('G')} $offset>
+      <BlackKey id="keyD#" onClick={() => addNote('D#')}>
+        {useKeyboard ? 'E' : 'D#'}
+      </BlackKey>
+      <WhiteKey id="keyE" onClick={() => addNote('E')} $offset>
+        {useKeyboard ? 'D' : 'E'}
+      </WhiteKey>
+      <WhiteKey id="keyF" onClick={() => addNote('F')}>
+        F
+      </WhiteKey>
+      <BlackKey id="keyF#" onClick={() => addNote('F#')}>
+        {useKeyboard ? 'T' : 'F#'}
+      </BlackKey>
+      <WhiteKey id="keyG" onClick={() => addNote('G')} $offset>
         G
       </WhiteKey>
-      <BlackKey onClick={() => addNote('G#')}>G#</BlackKey>
-      <WhiteKey onClick={() => addNote('A')} $offset>
-        A
+      <BlackKey id="keyG#" onClick={() => addNote('G#')}>
+        {useKeyboard ? 'Y' : 'G#'}
+      </BlackKey>
+      <WhiteKey id="keyA" onClick={() => addNote('A')} $offset>
+        {useKeyboard ? 'H' : 'A'}
       </WhiteKey>
-      <BlackKey onClick={() => addNote('A#')}>A#</BlackKey>
-      <WhiteKey onClick={() => addNote('B')} $offset>
-        B
+      <BlackKey id="keyA#" onClick={() => addNote('A#')}>
+        {useKeyboard ? 'U' : 'A#'}
+      </BlackKey>
+      <WhiteKey id="keyB" onClick={() => addNote('B')} $offset>
+        {useKeyboard ? 'J' : 'B'}
       </WhiteKey>
     </Container>
   )
@@ -132,6 +161,7 @@ const WhiteKey = styled(Key)<WhiteKeyProps>`
   background: linear-gradient(to bottom, hsl(0, 0%, 93%) 0%, white 100%);
   color: var(--black-30);
 
+  &.active,
   :active {
     border-top: 1px solid hsl(0, 0%, 47%);
     border-left: 1px solid hsl(0, 0%, 60%);
@@ -161,6 +191,7 @@ const BlackKey = styled(Key)`
   background: linear-gradient(45deg, hsl(0, 0%, 13%) 0%, hsl(0, 0%, 33%) 100%);
   color: var(--white-50);
 
+  &.active,
   :active {
     box-shadow: -1px -1px 2px var(--white-20) inset,
       0 -2px 2px 3px var(--black-60) inset, 0 1px 2px var(--black-50);
