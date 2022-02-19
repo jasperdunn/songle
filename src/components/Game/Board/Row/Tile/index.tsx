@@ -1,15 +1,20 @@
 import { theme } from 'common/theme'
+import { NoteHint } from 'components/Game/types'
 import { ReactNode } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 type TileProps = {
   children?: ReactNode
+  hint?: NoteHint
 }
-export function Tile({ children }: TileProps): JSX.Element {
-  return <Square>{children}</Square>
+export function Tile({ children, hint }: TileProps): JSX.Element {
+  return <Square $hint={hint}>{children}</Square>
 }
 
-const Square = styled.div`
+type SquareProps = {
+  $hint: TileProps['hint']
+}
+const Square = styled.div<SquareProps>`
   border: 2px solid gray;
   user-select: none;
   font-size: 16px;
@@ -28,4 +33,27 @@ const Square = styled.div`
   @media ${theme.breakpointUp.mobileLandscape} {
     font-size: 24px;
   }
+
+  ${({ $hint }) => {
+    switch ($hint) {
+      case 0:
+        return css`
+          background-color: ${theme.color.primary.background};
+          filter: brightness(0.8);
+        `
+
+      case 1:
+        return css`
+          background-color: blue;
+        `
+
+      case 2:
+        return css`
+          background-color: green;
+        `
+
+      default:
+        return
+    }
+  }}
 `

@@ -6,7 +6,7 @@ import {
   keyUp,
   clickButton,
 } from 'components/Game/Keyboard/utils'
-import { Note } from 'components/Game/types'
+import { Note, NoteValue } from 'components/Game/types'
 import { useContext, useEffect, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import { FiCornerDownLeft, FiDelete } from 'react-icons/fi'
@@ -20,7 +20,6 @@ export function Keyboard(): JSX.Element {
     attempts,
     setAttempts,
     melodyLength,
-    numberOfPossibleAttempts,
   } = useContext(GameContext)
 
   const currentAttempt = attempts[currentAttemptIndex]
@@ -42,17 +41,37 @@ export function Keyboard(): JSX.Element {
   }, [currentAttempt, currentAttemptIndex, setAttempts])
 
   const attemptChallenge = useCallback(() => {
-    if (
-      currentAttempt.length === melodyLength &&
-      currentAttemptIndex < numberOfPossibleAttempts - 1
-    ) {
-      setCurrentAttemptIndex((index) => index + 1)
+    // Filled the row with notes
+    if (currentAttempt.length === melodyLength) {
+      // Validate the Attempt
+      setAttempts((state) => {
+        const updatedAttempts = [...state]
+
+        // Validation function will be called from here
+        const updatedAttempt = [...currentAttempt].map(
+          (note) =>
+            ({
+              ...note,
+              hint: 0,
+            } as Note)
+        )
+
+        updatedAttempts[currentAttemptIndex] = updatedAttempt
+
+        return updatedAttempts
+      })
+
+      // Finished the last attempt (game over)
+      if (currentAttemptIndex < attempts.length - 1) {
+        setCurrentAttemptIndex((index) => index + 1)
+      }
     }
   }, [
-    currentAttempt.length,
+    attempts.length,
+    currentAttempt,
     currentAttemptIndex,
     melodyLength,
-    numberOfPossibleAttempts,
+    setAttempts,
     setCurrentAttemptIndex,
   ])
 
@@ -85,12 +104,12 @@ export function Keyboard(): JSX.Element {
     }
   }, [currentAttempt.length])
 
-  function addNote(note: Note): void {
+  function addNote(note: NoteValue): void {
     if (currentAttempt.length < melodyLength) {
       setAttempts((state) => {
         const updatedAttempts = [...state]
         const updatedAttempt = [...currentAttempt]
-        updatedAttempt.push(note)
+        updatedAttempt.push({ value: note })
 
         updatedAttempts[currentAttemptIndex] = updatedAttempt
 

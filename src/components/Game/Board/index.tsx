@@ -5,15 +5,18 @@ import { useContext } from 'react'
 import styled, { css } from 'styled-components'
 
 export function Board(): JSX.Element {
-  const { attempts, numberOfPossibleAttempts } = useContext(GameContext)
-  const possibleAttempts = Array.from(Array(numberOfPossibleAttempts).keys())
+  const { attempts } = useContext(GameContext)
 
   return (
     <GridContainer>
-      <Grid numberOfPossibleAttempts={numberOfPossibleAttempts}>
-        {possibleAttempts.map((a) => (
-          <Row key={a} attempt={attempts[a]} />
-        ))}
+      <Grid numberOfPossibleAttempts={attempts.length}>
+        {attempts.map((attempt, index) => {
+          if (attempt) {
+            return <Row key={index} attempt={attempt} />
+          }
+
+          return null
+        })}
       </Grid>
     </GridContainer>
   )
