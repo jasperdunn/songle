@@ -7,7 +7,7 @@ export const theme = {
     info: { background: '#e1f6ff', foreground: '#1978fe' },
     warning: { background: '#fffbe0', foreground: '#f79d13' },
     danger: { background: '#ffeeec', foreground: '#fc333e' },
-  } as ColorStructure,
+  },
   borderRadius: {
     small: '5px',
     medium: '10px',
@@ -50,5 +50,3 @@ export const theme = {
     },
   },
 } as const
-
-type ColorStructure = Record<string, { background: string; foreground: string }>

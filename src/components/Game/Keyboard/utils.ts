@@ -11,11 +11,13 @@ export const computerKeys = [
   't',
   'y',
   'u',
+  'Enter',
+  'Backspace',
 ] as const
 
 export type ComputerKey = typeof computerKeys[number]
 
-export function playNote(key: ComputerKey): void {
+export function clickButton(key: ComputerKey): void {
   const keyElement = getKeyElement(key)
 
   if (keyElement) {
@@ -39,7 +41,7 @@ export function keyUp(this: Document, event: KeyboardEvent): void {
 }
 
 function getKeyElement(key: ComputerKey): HTMLElement | null {
-  const keyId = getKeyIdFromEventKey(key)
+  const keyId = getKeyIdFromComputerKey(key)
 
   if (keyId === null) {
     return null
@@ -48,7 +50,7 @@ function getKeyElement(key: ComputerKey): HTMLElement | null {
   return document.getElementById(keyId)
 }
 
-function getKeyIdFromEventKey(key: ComputerKey): string | null {
+function getKeyIdFromComputerKey(key: ComputerKey): string | null {
   switch (key) {
     case 'a':
       return 'keyC'
@@ -85,6 +87,12 @@ function getKeyIdFromEventKey(key: ComputerKey): string | null {
 
     case 'j':
       return 'keyB'
+
+    case 'Enter':
+      return 'keyEnter'
+
+    case 'Backspace':
+      return 'keyBackspace'
 
     default:
       return null

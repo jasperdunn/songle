@@ -4,11 +4,12 @@ import {
   ComputerKey,
   computerKeys,
   keyUp,
-  playNote,
+  clickButton,
 } from 'components/Game/Keyboard/utils'
 import { Note } from 'components/Game/types'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useCallback } from 'react'
 import styled, { css } from 'styled-components'
+import { FiCornerDownLeft, FiDelete } from 'react-icons/fi'
 
 export function Keyboard(): JSX.Element {
   const useKeyboard = true
@@ -24,42 +25,54 @@ export function Keyboard(): JSX.Element {
 
   const currentAttempt = attempts[currentAttemptIndex]
 
+  const removeLastNote = useCallback(() => {
+    if (currentAttempt.length === 0) {
+      return
+    }
+
+    setAttempts((state) => {
+      const updatedAttempts = [...state]
+      const updatedAttempt = [...currentAttempt]
+      updatedAttempt.pop()
+
+      updatedAttempts[currentAttemptIndex] = updatedAttempt
+
+      return updatedAttempts
+    })
+  }, [currentAttempt, currentAttemptIndex, setAttempts])
+
+  const attemptChallenge = useCallback(() => {
+    if (
+      currentAttempt.length === melodyLength &&
+      currentAttemptIndex < numberOfPossibleAttempts - 1
+    ) {
+      setCurrentAttemptIndex((index) => index + 1)
+    }
+  }, [
+    currentAttempt.length,
+    currentAttemptIndex,
+    melodyLength,
+    numberOfPossibleAttempts,
+    setCurrentAttemptIndex,
+  ])
+
   useEffect(() => {
-    function removeLastNote(): void {
-      setAttempts((state) => {
-        const updatedAttempts = [...state]
-        const updatedAttempt = [...currentAttempt]
-        updatedAttempt.pop()
-
-        updatedAttempts[currentAttemptIndex] = updatedAttempt
-
-        return updatedAttempts
-      })
-    }
-
-    function attemptChallenge(): void {
-      if (
-        currentAttempt.length === melodyLength &&
-        currentAttemptIndex < numberOfPossibleAttempts - 1
-      ) {
-        setCurrentAttemptIndex((index) => index + 1)
-      }
-    }
-
     function keyDown(this: Document, event: KeyboardEvent): void {
       if (event.key === 'Backspace' && currentAttempt.length > 0) {
         event.preventDefault()
+        clickButton(event.key as ComputerKey)
+        return
+      }
 
-        removeLastNote()
-      } else if (event.key === 'Enter' && !event.repeat) {
+      if (event.key === 'Enter' && !event.repeat) {
         event.preventDefault()
+        clickButton(event.key as ComputerKey)
+        return
+      }
 
-        attemptChallenge()
-      } else if (
-        computerKeys.includes(event.key as ComputerKey) &&
-        !event.repeat
-      ) {
-        playNote(event.key as ComputerKey)
+      if (computerKeys.includes(event.key as ComputerKey) && !event.repeat) {
+        event.preventDefault()
+        clickButton(event.key as ComputerKey)
       }
     }
 
@@ -70,14 +83,7 @@ export function Keyboard(): JSX.Element {
       document.removeEventListener('keydown', keyDown)
       document.removeEventListener('keyup', keyUp)
     }
-  }, [
-    currentAttempt,
-    currentAttemptIndex,
-    setAttempts,
-    melodyLength,
-    numberOfPossibleAttempts,
-    setCurrentAttemptIndex,
-  ])
+  }, [currentAttempt.length])
 
   function addNote(note: Note): void {
     if (currentAttempt.length < melodyLength) {
@@ -95,45 +101,85 @@ export function Keyboard(): JSX.Element {
 
   return (
     <Container>
-      <WhiteKey id="keyC" onClick={() => addNote('C')}>
-        {useKeyboard ? 'A' : 'C'}
-      </WhiteKey>
-      <BlackKey id="keyC#" onClick={() => addNote('C#')}>
-        {useKeyboard ? 'W' : 'C#'}
-      </BlackKey>
-      <WhiteKey id="keyD" onClick={() => addNote('D')} $offset>
-        {useKeyboard ? 'S' : 'D'}
-      </WhiteKey>
-      <BlackKey id="keyD#" onClick={() => addNote('D#')}>
-        {useKeyboard ? 'E' : 'D#'}
-      </BlackKey>
-      <WhiteKey id="keyE" onClick={() => addNote('E')} $offset>
-        {useKeyboard ? 'D' : 'E'}
-      </WhiteKey>
-      <WhiteKey id="keyF" onClick={() => addNote('F')}>
-        F
-      </WhiteKey>
-      <BlackKey id="keyF#" onClick={() => addNote('F#')}>
-        {useKeyboard ? 'T' : 'F#'}
-      </BlackKey>
-      <WhiteKey id="keyG" onClick={() => addNote('G')} $offset>
-        G
-      </WhiteKey>
-      <BlackKey id="keyG#" onClick={() => addNote('G#')}>
-        {useKeyboard ? 'Y' : 'G#'}
-      </BlackKey>
-      <WhiteKey id="keyA" onClick={() => addNote('A')} $offset>
-        {useKeyboard ? 'H' : 'A'}
-      </WhiteKey>
-      <BlackKey id="keyA#" onClick={() => addNote('A#')}>
-        {useKeyboard ? 'U' : 'A#'}
-      </BlackKey>
-      <WhiteKey id="keyB" onClick={() => addNote('B')} $offset>
-        {useKeyboard ? 'J' : 'B'}
-      </WhiteKey>
+      <Keys>
+        <WhiteKey id="keyC" onClick={() => addNote('C')}>
+          {useKeyboard ? 'A' : 'C'}
+        </WhiteKey>
+        <BlackKey id="keyC#" onClick={() => addNote('C#')}>
+          {useKeyboard ? 'W' : 'C#'}
+        </BlackKey>
+        <WhiteKey id="keyD" onClick={() => addNote('D')} $offset>
+          {useKeyboard ? 'S' : 'D'}
+        </WhiteKey>
+        <BlackKey id="keyD#" onClick={() => addNote('D#')}>
+          {useKeyboard ? 'E' : 'D#'}
+        </BlackKey>
+        <WhiteKey id="keyE" onClick={() => addNote('E')} $offset>
+          {useKeyboard ? 'D' : 'E'}
+        </WhiteKey>
+        <WhiteKey id="keyF" onClick={() => addNote('F')}>
+          F
+        </WhiteKey>
+        <BlackKey id="keyF#" onClick={() => addNote('F#')}>
+          {useKeyboard ? 'T' : 'F#'}
+        </BlackKey>
+        <WhiteKey id="keyG" onClick={() => addNote('G')} $offset>
+          G
+        </WhiteKey>
+        <BlackKey id="keyG#" onClick={() => addNote('G#')}>
+          {useKeyboard ? 'Y' : 'G#'}
+        </BlackKey>
+        <WhiteKey id="keyA" onClick={() => addNote('A')} $offset>
+          {useKeyboard ? 'H' : 'A'}
+        </WhiteKey>
+        <BlackKey id="keyA#" onClick={() => addNote('A#')}>
+          {useKeyboard ? 'U' : 'A#'}
+        </BlackKey>
+        <WhiteKey id="keyB" onClick={() => addNote('B')} $offset>
+          {useKeyboard ? 'J' : 'B'}
+        </WhiteKey>
+      </Keys>
+      <Buttons>
+        <Button id="keyBackspace" onClick={removeLastNote}>
+          <FiDelete size={48} color="black" title="backspace" />
+        </Button>
+        <Button id="keyEnter" onClick={attemptChallenge}>
+          <FiCornerDownLeft size={48} color="black" title="submit" />
+        </Button>
+      </Buttons>
     </Container>
   )
 }
+
+const Container = styled.div`
+  display: flex;
+`
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`
+
+const Button = styled.button`
+  border: 0;
+  background-color: ${theme.color.secondary.background};
+  height: fit-content;
+  width: fit-content;
+  padding: 4px;
+  margin: 0;
+  display: inline-flex;
+
+  &:hover {
+    cursor: pointer;
+    filter: brightness(1.2);
+  }
+
+  &.active,
+  &:active {
+    filter: brightness(1.4);
+  }
+`
 
 const Key = styled.button`
   position: relative;
@@ -162,7 +208,7 @@ const WhiteKey = styled(Key)<WhiteKeyProps>`
   color: var(--black-30);
 
   &.active,
-  :active {
+  &:active {
     border-top: 1px solid hsl(0, 0%, 47%);
     border-left: 1px solid hsl(0, 0%, 60%);
     border-bottom: 1px solid hsl(0, 0%, 60%);
@@ -192,7 +238,7 @@ const BlackKey = styled(Key)`
   color: var(--white-50);
 
   &.active,
-  :active {
+  &:active {
     box-shadow: -1px -1px 2px var(--white-20) inset,
       0 -2px 2px 3px var(--black-60) inset, 0 1px 2px var(--black-50);
     background: linear-gradient(
@@ -204,7 +250,7 @@ const BlackKey = styled(Key)`
   }
 `
 
-const Container = styled.div`
+const Keys = styled.div`
   --black-10: hsla(0, 0%, 0%, 0.1);
   --black-20: hsla(0, 0%, 0%, 0.2);
   --black-30: hsla(0, 0%, 0%, 0.3);
@@ -217,8 +263,6 @@ const Container = styled.div`
   position: relative;
   user-select: none;
   height: 200px;
-  padding: 10px;
-  padding-top: 0;
   display: flex;
   justify-content: center;
 
@@ -228,9 +272,5 @@ const Container = styled.div`
 
   ${Key}:last-child {
     border-radius: 0 5px 5px 5px;
-  }
-
-  @media ${theme.breakpointUp.mobileLandscape} {
-    width: 500px;
   }
 `
