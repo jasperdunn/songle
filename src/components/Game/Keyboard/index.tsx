@@ -7,12 +7,12 @@ import {
   clickButton,
 } from 'components/Game/Keyboard/utils'
 import { Note, NoteValue } from 'components/Game/types'
-import { useContext, useEffect, useCallback } from 'react'
+import { useContext, useEffect, useCallback, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { FiCornerDownLeft, FiDelete } from 'react-icons/fi'
+import { FiCornerDownLeft, FiDelete, FiEye, FiEyeOff } from 'react-icons/fi'
 
 export function Keyboard(): JSX.Element {
-  const useKeyboard = true
+  const [usingKeyboard, setUsingKeyboard] = useState(false)
 
   const {
     currentAttemptIndex,
@@ -120,50 +120,63 @@ export function Keyboard(): JSX.Element {
 
   return (
     <Container>
+      <Buttons>
+        <Button
+          id="keyToggleKeyboard"
+          onClick={() => setUsingKeyboard((state) => !state)}
+          title={usingKeyboard ? 'hide key map' : 'show key map'}
+        >
+          {usingKeyboard ? (
+            <FiEye size={48} color="black" />
+          ) : (
+            <FiEyeOff size={48} color="black" />
+          )}
+        </Button>
+      </Buttons>
       <Keys>
         <WhiteKey id="keyC" onClick={() => addNote('C')}>
-          {useKeyboard ? 'A' : 'C'}
+          {usingKeyboard ? 'A' : 'C'}
         </WhiteKey>
         <BlackKey id="keyC#" onClick={() => addNote('C#')}>
-          {useKeyboard ? 'W' : 'C#'}
+          {usingKeyboard ? 'W' : 'C#'}
         </BlackKey>
         <WhiteKey id="keyD" onClick={() => addNote('D')} $offset>
-          {useKeyboard ? 'S' : 'D'}
+          {usingKeyboard ? 'S' : 'D'}
         </WhiteKey>
         <BlackKey id="keyD#" onClick={() => addNote('D#')}>
-          {useKeyboard ? 'E' : 'D#'}
+          {usingKeyboard ? 'E' : 'D#'}
         </BlackKey>
         <WhiteKey id="keyE" onClick={() => addNote('E')} $offset>
-          {useKeyboard ? 'D' : 'E'}
+          {usingKeyboard ? 'D' : 'E'}
         </WhiteKey>
         <WhiteKey id="keyF" onClick={() => addNote('F')}>
           F
         </WhiteKey>
         <BlackKey id="keyF#" onClick={() => addNote('F#')}>
-          {useKeyboard ? 'T' : 'F#'}
+          {usingKeyboard ? 'T' : 'F#'}
         </BlackKey>
         <WhiteKey id="keyG" onClick={() => addNote('G')} $offset>
           G
         </WhiteKey>
         <BlackKey id="keyG#" onClick={() => addNote('G#')}>
-          {useKeyboard ? 'Y' : 'G#'}
+          {usingKeyboard ? 'Y' : 'G#'}
         </BlackKey>
         <WhiteKey id="keyA" onClick={() => addNote('A')} $offset>
-          {useKeyboard ? 'H' : 'A'}
+          {usingKeyboard ? 'H' : 'A'}
         </WhiteKey>
         <BlackKey id="keyA#" onClick={() => addNote('A#')}>
-          {useKeyboard ? 'U' : 'A#'}
+          {usingKeyboard ? 'U' : 'A#'}
         </BlackKey>
         <WhiteKey id="keyB" onClick={() => addNote('B')} $offset>
-          {useKeyboard ? 'J' : 'B'}
+          {usingKeyboard ? 'J' : 'B'}
         </WhiteKey>
       </Keys>
       <Buttons>
-        <Button id="keyBackspace" onClick={removeLastNote}>
-          <FiDelete size={48} color="black" title="backspace" />
+        <Button id="keyBackspace" onClick={removeLastNote} title="backspace">
+          <FiDelete size={48} color="black" />
         </Button>
-        <Button id="keyEnter" onClick={attemptChallenge}>
-          <FiCornerDownLeft size={48} color="black" title="submit" />
+        <Button id="keyEnter" onClick={attemptChallenge} title="submit">
+          <FiCornerDownLeft size={48} color="black" />
         </Button>
       </Buttons>
     </Container>
