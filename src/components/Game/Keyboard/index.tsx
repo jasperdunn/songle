@@ -20,8 +20,11 @@ export function Keyboard(): JSX.Element {
     attempts,
     setAttempts,
     melodyLength,
+    endGame,
+    gameOverResult,
   } = useContext(GameContext)
 
+  const gameIsOver = gameOverResult !== null
   const currentAttempt = attempts[currentAttemptIndex]
 
   const removeLastNote = useCallback(() => {
@@ -43,27 +46,32 @@ export function Keyboard(): JSX.Element {
   const attemptChallenge = useCallback(() => {
     // Filled the row with notes
     if (currentAttempt.length === melodyLength) {
-      // Validate the Attempt
+      // Validation function will be called from here
+      const updatedAttempt = [...currentAttempt].map(
+        (note) =>
+          ({
+            ...note,
+            hint: 0,
+          } as Note)
+      )
+
       setAttempts((state) => {
         const updatedAttempts = [...state]
-
-        // Validation function will be called from here
-        const updatedAttempt = [...currentAttempt].map(
-          (note) =>
-            ({
-              ...note,
-              hint: 0,
-            } as Note)
-        )
 
         updatedAttempts[currentAttemptIndex] = updatedAttempt
 
         return updatedAttempts
       })
 
-      // Finished the last attempt (game over)
+      if (updatedAttempt.every((note) => note.hint === 2)) {
+        endGame('success')
+        return
+      }
+
       if (currentAttemptIndex < attempts.length - 1) {
         setCurrentAttemptIndex((index) => index + 1)
+      } else {
+        endGame('fail')
       }
     }
   }, [
@@ -73,11 +81,12 @@ export function Keyboard(): JSX.Element {
     melodyLength,
     setAttempts,
     setCurrentAttemptIndex,
+    endGame,
   ])
 
   useEffect(() => {
     function keyDown(this: Document, event: KeyboardEvent): void {
-      if (event.key === 'Backspace' && currentAttempt.length > 0) {
+      if (event.key === 'Backspace') {
         event.preventDefault()
         clickButton(event.key as ComputerKey)
         return
@@ -89,7 +98,14 @@ export function Keyboard(): JSX.Element {
         return
       }
 
-      if (computerKeys.includes(event.key as ComputerKey) && !event.repeat) {
+      if (
+        computerKeys.includes(event.key as ComputerKey) &&
+        !event.repeat &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !event.metaKey &&
+        !event.shiftKey
+      ) {
         event.preventDefault()
         clickButton(event.key as ComputerKey)
       }
@@ -125,6 +141,7 @@ export function Keyboard(): JSX.Element {
           id="keyToggleKeyboard"
           onClick={() => setUsingKeyboard((state) => !state)}
           title={usingKeyboard ? 'hide key map' : 'show key map'}
+          type="button"
         >
           {usingKeyboard ? (
             <FiEye size={48} color="black" />
@@ -134,48 +151,125 @@ export function Keyboard(): JSX.Element {
         </Button>
       </Buttons>
       <Keys>
-        <WhiteKey id="keyC" onClick={() => addNote('C')}>
+        <WhiteKey
+          id="keyC"
+          onClick={() => addNote('C')}
+          type="button"
+          disabled={gameIsOver}
+        >
           {usingKeyboard ? 'A' : 'C'}
         </WhiteKey>
-        <BlackKey id="keyC#" onClick={() => addNote('C#')}>
+        <BlackKey
+          id="keyC#"
+          onClick={() => addNote('C#')}
+          type="button"
+          disabled={gameIsOver}
+        >
           {usingKeyboard ? 'W' : 'C#'}
         </BlackKey>
-        <WhiteKey id="keyD" onClick={() => addNote('D')} $offset>
+        <WhiteKey
+          id="keyD"
+          onClick={() => addNote('D')}
+          type="button"
+          disabled={gameIsOver}
+          $offset
+        >
           {usingKeyboard ? 'S' : 'D'}
         </WhiteKey>
-        <BlackKey id="keyD#" onClick={() => addNote('D#')}>
+        <BlackKey
+          id="keyD#"
+          onClick={() => addNote('D#')}
+          type="button"
+          disabled={gameIsOver}
+        >
           {usingKeyboard ? 'E' : 'D#'}
         </BlackKey>
-        <WhiteKey id="keyE" onClick={() => addNote('E')} $offset>
+        <WhiteKey
+          id="keyE"
+          onClick={() => addNote('E')}
+          type="button"
+          disabled={gameIsOver}
+          $offset
+        >
           {usingKeyboard ? 'D' : 'E'}
         </WhiteKey>
-        <WhiteKey id="keyF" onClick={() => addNote('F')}>
+        <WhiteKey
+          id="keyF"
+          onClick={() => addNote('F')}
+          type="button"
+          disabled={gameIsOver}
+        >
           F
         </WhiteKey>
-        <BlackKey id="keyF#" onClick={() => addNote('F#')}>
+        <BlackKey
+          id="keyF#"
+          onClick={() => addNote('F#')}
+          type="button"
+          disabled={gameIsOver}
+        >
           {usingKeyboard ? 'T' : 'F#'}
         </BlackKey>
-        <WhiteKey id="keyG" onClick={() => addNote('G')} $offset>
+        <WhiteKey
+          id="keyG"
+          onClick={() => addNote('G')}
+          type="button"
+          disabled={gameIsOver}
+          $offset
+        >
           G
         </WhiteKey>
-        <BlackKey id="keyG#" onClick={() => addNote('G#')}>
+        <BlackKey
+          id="keyG#"
+          onClick={() => addNote('G#')}
+          type="button"
+          disabled={gameIsOver}
+        >
           {usingKeyboard ? 'Y' : 'G#'}
         </BlackKey>
-        <WhiteKey id="keyA" onClick={() => addNote('A')} $offset>
+        <WhiteKey
+          id="keyA"
+          onClick={() => addNote('A')}
+          type="button"
+          disabled={gameIsOver}
+          $offset
+        >
           {usingKeyboard ? 'H' : 'A'}
         </WhiteKey>
-        <BlackKey id="keyA#" onClick={() => addNote('A#')}>
+        <BlackKey
+          id="keyA#"
+          onClick={() => addNote('A#')}
+          type="button"
+          disabled={gameIsOver}
+        >
           {usingKeyboard ? 'U' : 'A#'}
         </BlackKey>
-        <WhiteKey id="keyB" onClick={() => addNote('B')} $offset>
+        <WhiteKey
+          id="keyB"
+          onClick={() => addNote('B')}
+          type="button"
+          disabled={gameIsOver}
+          $offset
+        >
           {usingKeyboard ? 'J' : 'B'}
         </WhiteKey>
       </Keys>
       <Buttons>
-        <Button id="keyBackspace" onClick={removeLastNote} title="backspace">
+        <Button
+          id="keyBackspace"
+          onClick={removeLastNote}
+          type="button"
+          title="backspace"
+          disabled={gameIsOver}
+        >
           <FiDelete size={48} color="black" />
         </Button>
-        <Button id="keyEnter" onClick={attemptChallenge} title="submit">
+        <Button
+          id="keyEnter"
+          onClick={attemptChallenge}
+          type="submit"
+          title="submit"
+          disabled={gameIsOver}
+        >
           <FiCornerDownLeft size={48} color="black" />
         </Button>
       </Buttons>
@@ -201,14 +295,16 @@ const Button = styled.button`
   padding: 4px;
   margin: 0;
   display: inline-flex;
-
-  &:hover {
+  :not(:disabled) {
     cursor: pointer;
+  }
+
+  &:hover:not(:disabled) {
     filter: brightness(1.2);
   }
 
-  &.active,
-  &:active {
+  &.active:not(:disabled),
+  &:active:not(:disabled) {
     filter: brightness(1.4);
   }
 `
@@ -221,7 +317,10 @@ const Key = styled.button`
   align-items: flex-end;
   padding: 0.5rem 0;
   user-select: none;
-  cursor: pointer;
+
+  :not(:disabled) {
+    cursor: pointer;
+  }
 `
 
 type WhiteKeyProps = {
@@ -230,7 +329,6 @@ type WhiteKeyProps = {
 const WhiteKey = styled(Key)<WhiteKeyProps>`
   height: 12.5rem;
   width: 2.5rem;
-  z-index: 1;
   border-left: 1px solid hsl(0, 0%, 73%);
   border-bottom: 1px solid hsl(0, 0%, 73%);
   border-radius: 0 0 5px 5px;
@@ -239,8 +337,8 @@ const WhiteKey = styled(Key)<WhiteKeyProps>`
   background: linear-gradient(to bottom, hsl(0, 0%, 93%) 0%, white 100%);
   color: var(--black-30);
 
-  &.active,
-  &:active {
+  &.active:not(:disabled),
+  &:active:not(:disabled) {
     border-top: 1px solid hsl(0, 0%, 47%);
     border-left: 1px solid hsl(0, 0%, 60%);
     border-bottom: 1px solid hsl(0, 0%, 60%);
@@ -261,7 +359,7 @@ const BlackKey = styled(Key)`
   height: 8rem;
   width: 2rem;
   margin: 0 0 0 -1rem;
-  z-index: 2;
+  z-index: 1;
   border: 1px solid black;
   border-radius: 0 0 3px 3px;
   box-shadow: -1px -1px 2px var(--white-20) inset,
@@ -269,8 +367,8 @@ const BlackKey = styled(Key)`
   background: linear-gradient(45deg, hsl(0, 0%, 13%) 0%, hsl(0, 0%, 33%) 100%);
   color: var(--white-50);
 
-  &.active,
-  &:active {
+  &.active:not(:disabled),
+  &:active:not(:disabled) {
     box-shadow: -1px -1px 2px var(--white-20) inset,
       0 -2px 2px 3px var(--black-60) inset, 0 1px 2px var(--black-50);
     background: linear-gradient(

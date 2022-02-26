@@ -1,4 +1,4 @@
-import { Attempt } from 'components/Game/types'
+import { Attempt, GameOverResult } from 'components/Game/types'
 import { createContext } from 'react'
 
 type GameContextType = {
@@ -7,5 +7,8 @@ type GameContextType = {
   attempts: Attempt[]
   setAttempts: React.Dispatch<React.SetStateAction<Attempt[]>>
   melodyLength: number
+  endGame: (result: GameOverResult) => void
+  gameOverResult: GameOverResult | null
+  modalIsOpen: boolean
 }
 export const GameContext = createContext({} as GameContextType)
