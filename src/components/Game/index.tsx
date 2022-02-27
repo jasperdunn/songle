@@ -2,13 +2,18 @@ import { Board } from 'components/Game/Board'
 import { GameContext } from 'components/Game/context'
 import { GameOverModal } from 'components/Game/GameOverModal'
 import { Keyboard } from 'components/Game/Keyboard'
-import { sampleData } from 'components/Game/sampleData'
-import { Attempt, GameOverResult } from 'components/Game/types'
+import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
 import { useState } from 'react'
 import styled from 'styled-components'
 
 export function Game(): JSX.Element {
   const numberOfPossibleAttempts = 6
+  const challenge: Challenge = {
+    melody: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
+    title: 'Uptown Funk',
+    artist: 'Bruno Mars',
+    bpm: 115,
+  }
 
   const [currentAttemptIndex, setCurrentAttemptIndex] = useState<number>(0)
   const [attempts, setAttempts] = useState<Attempt[]>(() =>
@@ -31,10 +36,11 @@ export function Game(): JSX.Element {
         setCurrentAttemptIndex,
         attempts,
         setAttempts,
-        melodyLength: sampleData.melody.length,
+        melodyLength: challenge.melody.length,
         endGame,
         gameOverResult,
         modalIsOpen,
+        challenge,
       }}
     >
       <Container>

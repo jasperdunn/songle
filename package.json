@@ -79,6 +79,11 @@
     "semi": false,
     "singleQuote": true
   },
+  "jest": {
+    "testMatch": [
+      "**/*.test.ts"
+    ]
+  },
   "browserslist": {
     "production": [
       ">0.2%",

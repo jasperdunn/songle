@@ -10,6 +10,7 @@ import { Note, NoteValue } from 'components/Game/types'
 import { useContext, useEffect, useCallback, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { FiCornerDownLeft, FiDelete, FiEye, FiEyeOff } from 'react-icons/fi'
+import { validate } from 'components/Game/utils'
 
 export function Keyboard(): JSX.Element {
   const [usingKeyboard, setUsingKeyboard] = useState(false)
@@ -22,6 +23,7 @@ export function Keyboard(): JSX.Element {
     melodyLength,
     endGame,
     gameOverResult,
+    challenge,
   } = useContext(GameContext)
 
   const gameIsOver = gameOverResult !== null
@@ -46,12 +48,15 @@ export function Keyboard(): JSX.Element {
   const attemptChallenge = useCallback(() => {
     // Filled the row with notes
     if (currentAttempt.length === melodyLength) {
-      // Validation function will be called from here
-      const updatedAttempt = [...currentAttempt].map(
-        (note) =>
+      const currentAttemptValues = currentAttempt.map((note) => note.value)
+
+      const noteHints = validate(currentAttemptValues, challenge.melody)
+
+      const updatedAttempt = currentAttempt.map(
+        (note, index) =>
           ({
             ...note,
-            hint: 0,
+            hint: noteHints[index],
           } as Note)
       )
 
@@ -82,6 +87,7 @@ export function Keyboard(): JSX.Element {
     setAttempts,
     setCurrentAttemptIndex,
     endGame,
+    challenge.melody,
   ])
 
   useEffect(() => {
