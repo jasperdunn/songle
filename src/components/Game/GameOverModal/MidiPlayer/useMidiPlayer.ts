@@ -6,6 +6,7 @@ type UseMidiPlayerReturnType = {
   loading: boolean
   play: () => void
   stop: () => void
+  bpm: number
 }
 
 type UseMidiPlayerConfig = {
@@ -60,5 +61,6 @@ export function useMidiPlayer(
     stop: () => {
       midiPlayerRef.current.stop()
     },
+    bpm: midiPlayerRef.current.tempo,
   }
 }
