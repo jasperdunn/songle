@@ -9,10 +9,12 @@ import styled from 'styled-components'
 export function Game(): JSX.Element {
   const numberOfPossibleAttempts = 6
   const challenge: Challenge = {
-    melody: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
-    title: 'Uptown Funk',
     artist: 'Bruno Mars',
+    title: 'Uptown Funk',
     bpm: 115,
+    melody: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
+    midiUrl:
+      'https://link.us1.storjshare.io/raw/jvyuafkb7tsa7s5ndf3752a6a2ca/songle/uptown-funk.mid',
   }
 
   const [currentAttemptIndex, setCurrentAttemptIndex] = useState<number>(0)
@@ -47,7 +49,7 @@ export function Game(): JSX.Element {
         <Board />
         <Keyboard />
         <GameOverModal
-          isOpen={modalIsOpen}
+          isOpen={true}
           type={gameOverResult}
           onHide={() => setModalIsOpen(false)}
         />

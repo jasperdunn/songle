@@ -8,6 +8,7 @@ export type Challenge = {
   title: string
   artist: string
   bpm: number
+  midiUrl: string
 }
 
 /** Used for validating (coloring) the attempts. */

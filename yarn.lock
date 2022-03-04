@@ -6507,6 +6507,11 @@ micromatch@^4.0.2, micromatch@^4.0.4:
     braces "^3.0.1"
     picomatch "^2.2.3"
 
+midi-player-js@^2.0.16:
+  version "2.0.16"
+  resolved "https://registry.yarnpkg.com/midi-player-js/-/midi-player-js-2.0.16.tgz#41167859e3f430e55eeb962887cb498726d6c570"
+  integrity sha512-Y1yCRvvSjJjT5J4U8T4XTCDF1FLXtw8Otvq5BAmIob/2cj10aQUDrPDFByTWeuMRPu6/nLhusROc1DuTLCzRnw==
+
 mime-db@1.51.0, "mime-db@>= 1.43.0 < 2":
   version "1.51.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.51.0.tgz#d9ff62451859b18342d960850dc3cfb77e63fb0c"
