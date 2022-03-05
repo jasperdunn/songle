@@ -1,13 +1,13 @@
 import { useMidiPlayer } from 'components/Game/GameOverModal/MidiPlayer/useMidiPlayer'
 import { Event } from 'midi-player-js'
 import { useEffect, useRef } from 'react'
-import { Synth, start, Frequency } from 'tone'
+import { start, Frequency, MonoSynth } from 'tone'
 
 type MidiPlayerProps = {
   srcUrl: string
 }
 export function MidiPlayer({ srcUrl }: MidiPlayerProps): JSX.Element {
-  const synthRef = useRef<Synth>()
+  const synthRef = useRef<MonoSynth>()
 
   const { loading, play, stop, bpm } = useMidiPlayer(srcUrl, {
     onMidiEvent: (event: Event) => {
@@ -21,7 +21,17 @@ export function MidiPlayer({ srcUrl }: MidiPlayerProps): JSX.Element {
   })
 
   useEffect(() => {
-    synthRef.current = new Synth().toDestination()
+    synthRef.current = new MonoSynth({
+      oscillator: {
+        type: 'sawtooth',
+      },
+      envelope: {
+        attack: 0,
+        decay: 0,
+        sustain: 1,
+        release: 0.1,
+      },
+    }).toDestination()
   }, [])
 
   useEffect(() => {
