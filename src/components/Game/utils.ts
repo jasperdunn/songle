@@ -10,11 +10,13 @@ export function validate(
     const note = attemptedSequence[i]
     let noteHint: NoteHint = 0
 
-    if (challengeSequence.includes(note)) {
-      if (note === challengeSequence[i]) {
-        noteHint = 2
-      } else {
-        noteHint = 1
+    if (note === challengeSequence[i]) {
+      noteHint = 1
+    } else {
+      for (let j = i++; j < challengeSequence.length; j++) {
+        if (note === challengeSequence[j]) {
+          noteHint = 2
+        }
       }
     }
 
