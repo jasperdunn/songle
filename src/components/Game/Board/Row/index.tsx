@@ -9,14 +9,14 @@ type RowProps = {
   attempt: Attempt
 }
 export function Row({ attempt }: RowProps): JSX.Element {
-  const { melodyLength } = useContext(GameContext)
+  const { melodyLength, notePlayed } = useContext(GameContext)
   const availableTiles = Array.from(Array(melodyLength).keys())
 
   return (
     <Grid melodyLength={melodyLength}>
       {availableTiles.map((n) => {
         if (!attempt[n]) {
-          return <Tile key={n}></Tile>
+          return <Tile key={n} played={notePlayed === n}></Tile>
         }
 
         const note = attempt[n]

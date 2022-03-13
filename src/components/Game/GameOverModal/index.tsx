@@ -1,36 +1,30 @@
 import { GameContext } from 'components/Game/context'
 import { Statistics } from 'components/Game/GameOverModal/Statistics'
-import { MidiPlayer } from 'components/Game/GameOverModal/MidiPlayer'
 import { GameOverResult } from 'components/Game/types'
 import { Modal } from 'components/Modal'
 import { useContext } from 'react'
 
 type GameOverModalProps = {
-  isOpen: boolean
-  type: GameOverResult | null
   onHide: () => void
 }
-export function GameOverModal({
-  isOpen,
-  type,
-  onHide,
-}: GameOverModalProps): JSX.Element {
-  const { challenge } = useContext(GameContext)
+export function GameOverModal({ onHide }: GameOverModalProps): JSX.Element {
+  const { modalIsOpen, gameOverResult } = useContext(GameContext)
 
   return (
-    <Modal isOpen={isOpen} onHide={onHide}>
-      {type && <GameOverMessage type={type} />}
+    <Modal isOpen={modalIsOpen} onHide={onHide}>
+      {gameOverResult && <GameOverMessage gameOverResult={gameOverResult} />}
       <Statistics />
-      <MidiPlayer srcUrl={challenge.midiUrl} />
     </Modal>
   )
 }
 
 type GameOverMessageProps = {
-  type: GameOverResult
+  gameOverResult: GameOverResult
 }
-function GameOverMessage({ type }: GameOverMessageProps): JSX.Element {
-  if (type === 'success') {
+function GameOverMessage({
+  gameOverResult,
+}: GameOverMessageProps): JSX.Element {
+  if (gameOverResult === 'success') {
     return (
       <>
         <h1>You made it!</h1>

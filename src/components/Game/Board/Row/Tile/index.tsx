@@ -6,13 +6,19 @@ import styled, { css } from 'styled-components'
 type TileProps = {
   children?: ReactNode
   hint?: NoteHint
+  played?: boolean
 }
-export function Tile({ children, hint }: TileProps): JSX.Element {
-  return <Square $hint={hint}>{children}</Square>
+export function Tile({ children, hint, played }: TileProps): JSX.Element {
+  return (
+    <Square $hint={hint} played={played}>
+      {children}
+    </Square>
+  )
 }
 
 type SquareProps = {
   $hint: TileProps['hint']
+  played: TileProps['played']
 }
 const Square = styled.div<SquareProps>`
   border: 2px solid gray;
@@ -33,6 +39,12 @@ const Square = styled.div<SquareProps>`
   @media ${theme.breakpointUp.mobileLandscape} {
     font-size: 24px;
   }
+
+  ${({ played }) =>
+    played &&
+    css`
+      border-style: dashed;
+    `}
 
   ${({ $hint }) => {
     switch ($hint) {

@@ -1,7 +1,9 @@
 import { Board } from 'components/Game/Board'
 import { GameContext } from 'components/Game/context'
 import { GameOverModal } from 'components/Game/GameOverModal'
+import { useMidiPlayer } from 'components/Game/GameOverModal/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
+import { RhythmPlayer } from 'components/Game/RhythmPlayer'
 import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
 import { useState } from 'react'
 import styled from 'styled-components'
@@ -13,8 +15,7 @@ export function Game(): JSX.Element {
     title: 'Uptown Funk',
     bpm: 115,
     melody: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
-    midiUrl:
-      'https://songle.blob.core.windows.net/midi/uptown-funk.mid',
+    midiUrl: 'https://songle.blob.core.windows.net/midi/uptown-funk.mid',
   }
 
   const [currentAttemptIndex, setCurrentAttemptIndex] = useState<number>(0)
@@ -24,6 +25,9 @@ export function Game(): JSX.Element {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [gameOverResult, setGameOverResult] = useState<GameOverResult | null>(
     null
+  )
+  const { loading, play, stop, playing, notePlayed } = useMidiPlayer(
+    challenge.midiUrl
   )
 
   function endGame(result: GameOverResult): void {
@@ -43,16 +47,19 @@ export function Game(): JSX.Element {
         gameOverResult,
         modalIsOpen,
         challenge,
+        notePlayed,
       }}
     >
       <Container>
+        <RhythmPlayer
+          play={play}
+          stop={stop}
+          loading={loading}
+          playing={playing}
+        />
         <Board />
         <Keyboard />
-        <GameOverModal
-          isOpen={true}
-          type={gameOverResult}
-          onHide={() => setModalIsOpen(false)}
-        />
+        <GameOverModal onHide={() => setModalIsOpen(false)} />
       </Container>
     </GameContext.Provider>
   )

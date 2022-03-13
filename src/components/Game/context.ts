@@ -11,5 +11,6 @@ type GameContextType = {
   gameOverResult: GameOverResult | null
   modalIsOpen: boolean
   challenge: Challenge
+  notePlayed: number | null
 }
 export const GameContext = createContext({} as GameContextType)
