@@ -7,6 +7,7 @@ type MidiPlayerProps = {
 }
 export function MidiPlayer({ srcUrl }: MidiPlayerProps): JSX.Element {
   const [loadingMidi, setLoadingMidi] = useState(true)
+  const [errorOccurred, setErrorOccurred] = useState(false)
   const midiRef = useRef<Midi>()
   const synthRef = useRef<MonoSynth>()
 
@@ -26,6 +27,7 @@ export function MidiPlayer({ srcUrl }: MidiPlayerProps): JSX.Element {
       initializeMidiPlayer()
     } catch (error) {
       console.error(error)
+      setErrorOccurred(true)
     } finally {
       setLoadingMidi(false)
     }
@@ -104,6 +106,10 @@ export function MidiPlayer({ srcUrl }: MidiPlayerProps): JSX.Element {
         index,
       }))
     ).start(0)
+  }
+
+  if (errorOccurred) {
+    return <div>Something went wrong!</div>
   }
 
   return (

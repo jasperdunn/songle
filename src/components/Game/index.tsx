@@ -14,7 +14,7 @@ export function Game(): JSX.Element {
     bpm: 115,
     melody: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
     midiUrl:
-      'https://link.us1.storjshare.io/raw/jvyuafkb7tsa7s5ndf3752a6a2ca/songle/uptown-funk.mid',
+      'https://songle.blob.core.windows.net/midi/uptown-funk.mid',
   }
 
   const [currentAttemptIndex, setCurrentAttemptIndex] = useState<number>(0)
