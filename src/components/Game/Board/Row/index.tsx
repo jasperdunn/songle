@@ -7,8 +7,9 @@ import styled, { css } from 'styled-components'
 
 type RowProps = {
   attempt: Attempt
+  isCurrentAttempt: boolean
 }
-export function Row({ attempt }: RowProps): JSX.Element {
+export function Row({ attempt, isCurrentAttempt }: RowProps): JSX.Element {
   const { melodyLength, notePlayed } = useContext(GameContext)
   const availableTiles = Array.from(Array(melodyLength).keys())
 
@@ -16,12 +17,18 @@ export function Row({ attempt }: RowProps): JSX.Element {
     <Grid melodyLength={melodyLength}>
       {availableTiles.map((n) => {
         if (!attempt[n]) {
-          return <Tile key={n} played={notePlayed === n}></Tile>
+          return (
+            <Tile key={n} played={isCurrentAttempt && notePlayed === n}></Tile>
+          )
         }
 
         const note = attempt[n]
         return (
-          <Tile key={n} hint={note.hint}>
+          <Tile
+            key={n}
+            hint={note.hint}
+            played={isCurrentAttempt && notePlayed === n}
+          >
             {note.value}
           </Tile>
         )
