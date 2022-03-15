@@ -14,6 +14,75 @@ export function useMidiPlayer(srcUrl: string): {
   const [notePlayed, setNotePlayed] = useState<number | null>(null)
   const midiRef = useRef<Midi>()
 
+  const initializeSynthWithMidiTrack = useCallback(
+    (bpm: number, track: Track): void => {
+      Transport.bpm.set({ value: bpm })
+
+      const synth = new MonoSynth({
+        volume: -8,
+        envelope: {
+          attack: 0,
+          attackCurve: 'linear',
+          decay: 0,
+          decayCurve: 'exponential',
+          release: 0.1,
+          releaseCurve: 'exponential',
+          sustain: 1,
+        },
+        filter: {
+          Q: 2,
+          detune: 0,
+          frequency: 2000,
+          gain: 0,
+          rolloff: -12,
+          type: 'lowpass',
+        },
+        filterEnvelope: {
+          attack: 0,
+          attackCurve: 'linear',
+          baseFrequency: 300,
+          decay: 1,
+          decayCurve: 'exponential',
+          exponent: 2,
+          octaves: 4,
+          release: 0.8,
+          releaseCurve: 'exponential',
+          sustain: 0,
+        },
+        oscillator: {
+          partialCount: 0,
+          phase: 0,
+          type: 'sawtooth',
+        },
+      }).toDestination()
+
+      new Part(
+        (time, note) => {
+          synth.triggerAttackRelease(
+            note.name,
+            note.duration,
+            time,
+            note.velocity
+          )
+
+          setNotePlayed(note.index)
+        },
+        track.notes.map((note, index) => ({
+          time: note.time + now(),
+          name: note.name,
+          velocity: note.velocity,
+          duration: note.duration,
+          index,
+        }))
+      ).start(0)
+
+      Transport.schedule(() => {
+        stop()
+      }, track.duration)
+    },
+    []
+  )
+
   const initialize = useCallback(async () => {
     try {
       setLoading(true)
@@ -36,77 +105,11 @@ export function useMidiPlayer(srcUrl: string): {
     } finally {
       setLoading(false)
     }
-  }, [srcUrl])
+  }, [initializeSynthWithMidiTrack, srcUrl])
 
   useEffect(() => {
     initialize()
   }, [initialize])
-
-  function initializeSynthWithMidiTrack(bpm: number, track: Track): void {
-    Transport.bpm.set({ value: bpm })
-
-    const synth = new MonoSynth({
-      volume: -8,
-      envelope: {
-        attack: 0,
-        attackCurve: 'linear',
-        decay: 0,
-        decayCurve: 'exponential',
-        release: 0.1,
-        releaseCurve: 'exponential',
-        sustain: 1,
-      },
-      filter: {
-        Q: 2,
-        detune: 0,
-        frequency: 2000,
-        gain: 0,
-        rolloff: -12,
-        type: 'lowpass',
-      },
-      filterEnvelope: {
-        attack: 0,
-        attackCurve: 'linear',
-        baseFrequency: 300,
-        decay: 1,
-        decayCurve: 'exponential',
-        exponent: 2,
-        octaves: 4,
-        release: 0.8,
-        releaseCurve: 'exponential',
-        sustain: 0,
-      },
-      oscillator: {
-        partialCount: 0,
-        phase: 0,
-        type: 'sawtooth',
-      },
-    }).toDestination()
-
-    new Part(
-      (time, note) => {
-        synth.triggerAttackRelease(
-          note.name,
-          note.duration,
-          time,
-          note.velocity
-        )
-
-        setNotePlayed(note.index)
-      },
-      track.notes.map((note, index) => ({
-        time: note.time + now(),
-        name: note.name,
-        velocity: note.velocity,
-        duration: note.duration,
-        index,
-      }))
-    ).start(0)
-
-    Transport.schedule(() => {
-      stop()
-    }, track.duration)
-  }
 
   async function play(): Promise<void> {
     /**
