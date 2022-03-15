@@ -1,18 +1,18 @@
 import { Button } from 'components/Button'
 import { FiPlay, FiSquare } from 'react-icons/fi'
 
-type RhythmPlayerProps = {
+type PlayerProps = {
   play: () => void
   stop: () => void
   loading: boolean
   playing: boolean
 }
-export function RhythmPlayer({
+export function Player({
   play,
   stop,
   loading,
   playing,
-}: RhythmPlayerProps): JSX.Element {
+}: PlayerProps): JSX.Element {
   if (loading) {
     return <>Loading...</>
   }

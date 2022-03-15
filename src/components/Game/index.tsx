@@ -1,9 +1,9 @@
 import { Board } from 'components/Game/Board'
 import { GameContext } from 'components/Game/context'
 import { GameOverModal } from 'components/Game/GameOverModal'
-import { useMidiPlayer } from 'components/Game/GameOverModal/useMidiPlayer'
+import { useMidiPlayer } from 'components/Game/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
-import { RhythmPlayer } from 'components/Game/RhythmPlayer'
+import { Player } from 'components/Game/Player'
 import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
 import { useState } from 'react'
 import styled from 'styled-components'
@@ -51,12 +51,7 @@ export function Game(): JSX.Element {
       }}
     >
       <Container>
-        <RhythmPlayer
-          play={play}
-          stop={stop}
-          loading={loading}
-          playing={playing}
-        />
+        <Player play={play} stop={stop} loading={loading} playing={playing} />
         <Board />
         <Keyboard />
         <GameOverModal onHide={() => setModalIsOpen(false)} />
