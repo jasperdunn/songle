@@ -1,8 +1,10 @@
 import { Board } from 'components/Game/Board'
 import { GameContext } from 'components/Game/context'
 import { GameOverModal } from 'components/Game/GameOverModal'
+import { useMidiPlayer } from 'components/Game/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
-import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
+import { Player } from 'components/Game/Player'
+import { Note, Challenge, GameOverResult } from 'components/Game/types'
 import { useState } from 'react'
 import styled from 'styled-components'
 
@@ -13,17 +15,21 @@ export function Game(): JSX.Element {
     title: 'Uptown Funk',
     bpm: 115,
     melody: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
-    midiUrl:
-      'https://link.us1.storjshare.io/raw/jvyuafkb7tsa7s5ndf3752a6a2ca/songle/uptown-funk.mid',
+    midiUrl: 'https://songle.blob.core.windows.net/midi/uptown-funk.mid',
   }
 
   const [currentAttemptIndex, setCurrentAttemptIndex] = useState<number>(0)
-  const [attempts, setAttempts] = useState<Attempt[]>(() =>
+  const [attempts, setAttempts] = useState<Note[][]>(() =>
     Array.from(Array(numberOfPossibleAttempts)).map(() => [])
   )
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [gameOverResult, setGameOverResult] = useState<GameOverResult | null>(
     null
+  )
+  const { loading, play, stop, playing, notePlayed } = useMidiPlayer(
+    challenge.midiUrl,
+    attempts,
+    currentAttemptIndex
   )
 
   function endGame(result: GameOverResult): void {
@@ -43,16 +49,14 @@ export function Game(): JSX.Element {
         gameOverResult,
         modalIsOpen,
         challenge,
+        notePlayed,
       }}
     >
       <Container>
+        <Player play={play} stop={stop} loading={loading} playing={playing} />
         <Board />
         <Keyboard />
-        <GameOverModal
-          isOpen={true}
-          type={gameOverResult}
-          onHide={() => setModalIsOpen(false)}
-        />
+        <GameOverModal onHide={() => setModalIsOpen(false)} />
       </Container>
     </GameContext.Provider>
   )

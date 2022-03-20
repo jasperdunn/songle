@@ -1,25 +1,26 @@
-import { NoteValue, NoteHint } from 'components/Game/types'
+import { Note, NoteValue } from 'components/Game/types'
 
 export function validate(
-  attemptedSequence: NoteValue[],
+  attemptedSequence: Note[],
   challengeSequence: NoteValue[]
-): NoteHint[] {
-  const noteHints: NoteHint[] = []
+): Note[] {
+  const validatedNotes: Note[] = []
 
   for (let i = 0; i < attemptedSequence.length; i++) {
     const note = attemptedSequence[i]
-    let noteHint: NoteHint = 0
 
-    if (challengeSequence.includes(note)) {
-      if (note === challengeSequence[i]) {
-        noteHint = 2
+    if (challengeSequence.includes(note.value)) {
+      if (note.value === challengeSequence[i]) {
+        note.hint = 2
       } else {
-        noteHint = 1
+        note.hint = 1
       }
+    } else {
+      note.hint = 0
     }
 
-    noteHints.push(noteHint)
+    validatedNotes.push(note)
   }
 
-  return noteHints
+  return validatedNotes
 }
