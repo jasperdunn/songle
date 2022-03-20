@@ -1,8 +1,14 @@
-import { Midi, Track } from '@tonejs/midi'
+import { Midi } from '@tonejs/midi'
+import { usePreviousValue } from 'common/usePreviousValue'
+import { Note } from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MonoSynth, now, Part, start, Transport } from 'tone'
 
-export function useMidiPlayer(srcUrl: string): {
+export function useMidiPlayer(
+  srcUrl: string,
+  attempts: Note[][],
+  currentAttemptIndex: number
+): {
   play: () => Promise<void>
   stop: () => void
   loading: boolean
@@ -13,77 +19,11 @@ export function useMidiPlayer(srcUrl: string): {
   const [playing, setPlaying] = useState(false)
   const [notePlayed, setNotePlayed] = useState<number | null>(null)
   const midiRef = useRef<Midi>()
+  const synthRef = useRef<MonoSynth>()
+  const partRef = useRef<Part>()
+  const prevCurrentAttemptIndex = usePreviousValue(currentAttemptIndex)
 
-  const initializeSynthWithMidiTrack = useCallback(
-    (bpm: number, track: Track): void => {
-      Transport.bpm.set({ value: bpm })
-
-      const synth = new MonoSynth({
-        volume: -8,
-        envelope: {
-          attack: 0,
-          attackCurve: 'linear',
-          decay: 0,
-          decayCurve: 'exponential',
-          release: 0.1,
-          releaseCurve: 'exponential',
-          sustain: 1,
-        },
-        filter: {
-          Q: 2,
-          detune: 0,
-          frequency: 2000,
-          gain: 0,
-          rolloff: -12,
-          type: 'lowpass',
-        },
-        filterEnvelope: {
-          attack: 0,
-          attackCurve: 'linear',
-          baseFrequency: 300,
-          decay: 1,
-          decayCurve: 'exponential',
-          exponent: 2,
-          octaves: 4,
-          release: 0.8,
-          releaseCurve: 'exponential',
-          sustain: 0,
-        },
-        oscillator: {
-          partialCount: 0,
-          phase: 0,
-          type: 'sawtooth',
-        },
-      }).toDestination()
-
-      new Part(
-        (time, note) => {
-          synth.triggerAttackRelease(
-            note.name,
-            note.duration,
-            time,
-            note.velocity
-          )
-
-          setNotePlayed(note.index)
-        },
-        track.notes.map((note, index) => ({
-          time: note.time + now(),
-          name: note.name,
-          velocity: note.velocity,
-          duration: note.duration,
-          index,
-        }))
-      ).start(0)
-
-      Transport.schedule(() => {
-        stop()
-      }, track.duration)
-    },
-    []
-  )
-
-  const initialize = useCallback(async () => {
+  const loadMidi = useCallback(async () => {
     try {
       setLoading(true)
       midiRef.current = await Midi.fromUrl(srcUrl)
@@ -96,20 +36,128 @@ export function useMidiPlayer(srcUrl: string): {
         throw new Error('Only use one Track per MIDI file.')
       }
 
-      initializeSynthWithMidiTrack(
-        midiRef.current.header.tempos[0].bpm,
-        midiRef.current.tracks[0]
-      )
+      Transport.bpm.set({ value: midiRef.current.header.tempos[0].bpm })
+      Transport.schedule(() => {
+        stop()
+      }, midiRef.current.tracks[0].duration)
+
+      const timeOffset = now()
+
+      partRef.current = new Part(
+        (time, note) => {
+          synthRef.current?.triggerAttackRelease(
+            note.name,
+            note.duration,
+            time,
+            note.velocity
+          )
+
+          setNotePlayed(note.index)
+        },
+        midiRef.current.tracks[0].notes.map((note, index) => {
+          return {
+            time: note.time + timeOffset,
+            name: note.name,
+            velocity: note.velocity,
+            duration: note.duration,
+            index,
+          }
+        })
+      ).start(0)
     } catch (error) {
       console.error(error)
     } finally {
       setLoading(false)
     }
-  }, [initializeSynthWithMidiTrack, srcUrl])
+  }, [srcUrl])
 
   useEffect(() => {
-    initialize()
-  }, [initialize])
+    if (!synthRef.current) {
+      setupSynth()
+    }
+
+    loadMidi()
+  }, [loadMidi])
+
+  useEffect(() => {
+    if (!midiRef.current || !partRef.current) {
+      return
+    }
+
+    if (prevCurrentAttemptIndex !== currentAttemptIndex) {
+      partRef.current.clear()
+
+      partRef.current = new Part(
+        (time, note) => {
+          synthRef.current?.triggerAttackRelease(
+            note.name,
+            note.duration,
+            time,
+            note.velocity
+          )
+
+          setNotePlayed(note.index)
+        },
+        midiRef.current.tracks[0].notes.map((note, index) => ({
+          time: note.time,
+          name: `${attempts[currentAttemptIndex - 1][index].value}1`,
+          velocity: note.velocity,
+          duration: note.duration,
+          index,
+        }))
+      ).start(0)
+    }
+  }, [attempts, currentAttemptIndex, prevCurrentAttemptIndex])
+
+  // setInterval(() => {
+  //   console.log({
+  //     now: Transport.now(),
+  //     position: Transport.position,
+  //     progress: Transport.progress,
+  //     seconds: Transport.seconds,
+  //     ticks: Transport.ticks,
+  //   })
+  // }, 1000)
+
+  function setupSynth(): void {
+    synthRef.current = new MonoSynth({
+      volume: -8,
+      envelope: {
+        attack: 0,
+        attackCurve: 'linear',
+        decay: 0,
+        decayCurve: 'exponential',
+        release: 0.1,
+        releaseCurve: 'exponential',
+        sustain: 1,
+      },
+      filter: {
+        Q: 2,
+        detune: 0,
+        frequency: 2000,
+        gain: 0,
+        rolloff: -12,
+        type: 'lowpass',
+      },
+      filterEnvelope: {
+        attack: 0,
+        attackCurve: 'linear',
+        baseFrequency: 300,
+        decay: 1,
+        decayCurve: 'exponential',
+        exponent: 2,
+        octaves: 4,
+        release: 0.8,
+        releaseCurve: 'exponential',
+        sustain: 0,
+      },
+      oscillator: {
+        partialCount: 0,
+        phase: 0,
+        type: 'sawtooth',
+      },
+    }).toDestination()
+  }
 
   async function play(): Promise<void> {
     /**

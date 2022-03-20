@@ -1,30 +1,7 @@
-import { NoteValue, NoteHint } from 'components/Game/types'
 import { validate } from 'components/Game/utils'
 import each from 'jest-each'
+import { attempts, ValidateParams } from './utils.test.data'
 
-const attempts: ValidateParams[] = [
-  {
-    attemptedSequence: ['D', 'D', 'D#', 'E', 'G', 'F', 'G', 'D', 'B'],
-    challengeSequence: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
-    expected: [2, 2, 0, 0, 1, 1, 1, 1, 0],
-  },
-  {
-    attemptedSequence: ['D', 'A', 'D#', 'E', 'G', 'F', 'G', 'D', 'B'],
-    challengeSequence: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
-    expected: [2, 0, 0, 0, 1, 1, 1, 1, 0],
-  },
-  {
-    attemptedSequence: ['F', 'A', 'D#', 'E', 'G', 'F', 'G', 'D', 'B'],
-    challengeSequence: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
-    expected: [1, 0, 0, 0, 1, 1, 1, 1, 0],
-  },
-]
-
-type ValidateParams = {
-  attemptedSequence: NoteValue[]
-  challengeSequence: NoteValue[]
-  expected: NoteHint[]
-}
 each`
   attemptedSequence                | challengeSequence                | expected
   ${attempts[0].attemptedSequence} | ${attempts[0].challengeSequence} | ${attempts[0].expected}

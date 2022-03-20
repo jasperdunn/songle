@@ -4,7 +4,7 @@ import { GameOverModal } from 'components/Game/GameOverModal'
 import { useMidiPlayer } from 'components/Game/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
 import { Player } from 'components/Game/Player'
-import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
+import { Note, Challenge, GameOverResult } from 'components/Game/types'
 import { useState } from 'react'
 import styled from 'styled-components'
 
@@ -19,7 +19,7 @@ export function Game(): JSX.Element {
   }
 
   const [currentAttemptIndex, setCurrentAttemptIndex] = useState<number>(0)
-  const [attempts, setAttempts] = useState<Attempt[]>(() =>
+  const [attempts, setAttempts] = useState<Note[][]>(() =>
     Array.from(Array(numberOfPossibleAttempts)).map(() => [])
   )
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -27,7 +27,9 @@ export function Game(): JSX.Element {
     null
   )
   const { loading, play, stop, playing, notePlayed } = useMidiPlayer(
-    challenge.midiUrl
+    challenge.midiUrl,
+    attempts,
+    currentAttemptIndex
   )
 
   function endGame(result: GameOverResult): void {

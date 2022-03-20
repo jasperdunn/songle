@@ -25,6 +25,4 @@ export type Note = {
   hint?: NoteHint
 }
 
-export type Attempt = Note[]
-
 export type GameOverResult = 'success' | 'fail'

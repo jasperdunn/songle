@@ -1,4 +1,3 @@
-import { theme } from 'common/theme'
 import { GameContext } from 'components/Game/context'
 import {
   ComputerKey,
@@ -49,17 +48,7 @@ export function Keyboard(): JSX.Element {
   const attemptChallenge = useCallback(() => {
     // Filled the row with notes
     if (currentAttempt.length === melodyLength) {
-      const currentAttemptValues = currentAttempt.map((note) => note.value)
-
-      const noteHints = validate(currentAttemptValues, challenge.melody)
-
-      const updatedAttempt = currentAttempt.map(
-        (note, index) =>
-          ({
-            ...note,
-            hint: noteHints[index],
-          } as Note)
-      )
+      const updatedAttempt = validate(currentAttempt, challenge.melody)
 
       setAttempts((state) => {
         const updatedAttempts = [...state]

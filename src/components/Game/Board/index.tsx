@@ -16,7 +16,10 @@ export function Board(): JSX.Element {
               <Row
                 key={index}
                 attempt={attempt}
-                isCurrentAttempt={currentAttemptIndex === index}
+                isPreviousAttempt={
+                  (currentAttemptIndex === 0 && index === 0) ||
+                  currentAttemptIndex - 1 === index
+                }
               />
             )
           }

@@ -1,15 +1,15 @@
 import { theme } from 'common/theme'
 import { Tile } from 'components/Game/Board/Row/Tile'
 import { GameContext } from 'components/Game/context'
-import { Attempt } from 'components/Game/types'
+import { Note } from 'components/Game/types'
 import { useContext } from 'react'
 import styled, { css } from 'styled-components'
 
 type RowProps = {
-  attempt: Attempt
-  isCurrentAttempt: boolean
+  attempt: Note[]
+  isPreviousAttempt: boolean
 }
-export function Row({ attempt, isCurrentAttempt }: RowProps): JSX.Element {
+export function Row({ attempt, isPreviousAttempt }: RowProps): JSX.Element {
   const { melodyLength, notePlayed } = useContext(GameContext)
   const availableTiles = Array.from(Array(melodyLength).keys())
 
@@ -18,7 +18,7 @@ export function Row({ attempt, isCurrentAttempt }: RowProps): JSX.Element {
       {availableTiles.map((n) => {
         if (!attempt[n]) {
           return (
-            <Tile key={n} played={isCurrentAttempt && notePlayed === n}></Tile>
+            <Tile key={n} played={isPreviousAttempt && notePlayed === n}></Tile>
           )
         }
 
@@ -27,7 +27,7 @@ export function Row({ attempt, isCurrentAttempt }: RowProps): JSX.Element {
           <Tile
             key={n}
             hint={note.hint}
-            played={isCurrentAttempt && notePlayed === n}
+            played={isPreviousAttempt && notePlayed === n}
           >
             {note.value}
           </Tile>
