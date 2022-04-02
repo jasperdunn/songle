@@ -9,7 +9,7 @@ export function useMidiPlayer(
   attempts: Note[][],
   currentAttemptIndex: number
 ): {
-  play: () => Promise<void>
+  play: () => void
   stop: () => void
   loading: boolean
   playing: boolean
@@ -21,7 +21,7 @@ export function useMidiPlayer(
   const midiRef = useRef<Midi>()
   const synthRef = useRef<MonoSynth>()
   const partRef = useRef<Part>()
-  const prevCurrentAttemptIndex = usePreviousValue(currentAttemptIndex)
+  const prevAttemptIndex = usePreviousValue(currentAttemptIndex)
 
   const loadMidi = useCallback(async () => {
     try {
@@ -57,7 +57,7 @@ export function useMidiPlayer(
         midiRef.current.tracks[0].notes.map((note, index) => {
           return {
             time: note.time + timeOffset,
-            name: note.name,
+            name: 'C1',
             velocity: note.velocity,
             duration: note.duration,
             index,
@@ -84,7 +84,7 @@ export function useMidiPlayer(
       return
     }
 
-    if (prevCurrentAttemptIndex !== currentAttemptIndex) {
+    if (prevAttemptIndex !== currentAttemptIndex) {
       partRef.current.clear()
 
       partRef.current = new Part(
@@ -107,7 +107,7 @@ export function useMidiPlayer(
         }))
       ).start(0)
     }
-  }, [attempts, currentAttemptIndex, prevCurrentAttemptIndex])
+  }, [attempts, currentAttemptIndex, prevAttemptIndex])
 
   // setInterval(() => {
   //   console.log({
