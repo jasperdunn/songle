@@ -1,6 +1,6 @@
 import { Midi } from '@tonejs/midi'
 import { usePreviousValue } from 'common/usePreviousValue'
-import { Note } from 'components/Game/types'
+import { Note, NoteValue } from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MonoSynth, now, Part, start, Transport } from 'tone'
 
@@ -14,6 +14,7 @@ export function useMidiPlayer(
   loading: boolean
   playing: boolean
   notePlayed: number | null
+  melody: NoteValue[]
 } {
   const [loading, setLoading] = useState(true)
   const [playing, setPlaying] = useState(false)
@@ -22,6 +23,7 @@ export function useMidiPlayer(
   const synthRef = useRef<MonoSynth>()
   const partRef = useRef<Part>()
   const prevAttemptIndex = usePreviousValue(currentAttemptIndex)
+  const [melody, setMelody] = useState<NoteValue[]>([])
 
   const loadMidi = useCallback(async () => {
     try {
@@ -41,8 +43,6 @@ export function useMidiPlayer(
         stop()
       }, midiRef.current.tracks[0].duration)
 
-      const timeOffset = now()
-
       partRef.current = new Part(
         (time, note) => {
           synthRef.current?.triggerAttackRelease(
@@ -56,7 +56,7 @@ export function useMidiPlayer(
         },
         midiRef.current.tracks[0].notes.map((note, index) => {
           return {
-            time: note.time + timeOffset,
+            time: note.time + now(),
             name: 'C1',
             velocity: note.velocity,
             duration: note.duration,
@@ -64,6 +64,10 @@ export function useMidiPlayer(
           }
         })
       ).start(0)
+
+      setMelody(
+        midiRef.current.tracks[0].notes.map((note) => note.name as NoteValue)
+      )
     } catch (error) {
       console.error(error)
     } finally {
@@ -100,7 +104,7 @@ export function useMidiPlayer(
         },
         midiRef.current.tracks[0].notes.map((note, index) => ({
           time: note.time,
-          name: `${attempts[currentAttemptIndex - 1][index].value}1`,
+          name: attempts[currentAttemptIndex - 1][index].value,
           velocity: note.velocity,
           duration: note.duration,
           index,
@@ -177,5 +181,5 @@ export function useMidiPlayer(
     setPlaying(false)
   }
 
-  return { play, stop, loading, playing, notePlayed }
+  return { play, stop, loading, playing, notePlayed, melody }
 }

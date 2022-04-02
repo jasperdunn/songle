@@ -5,50 +5,56 @@ import {
   keyUp,
   clickButton,
 } from 'components/Game/Keyboard/utils'
-import { Note, NoteValue } from 'components/Game/types'
-import { useContext, useEffect, useCallback, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { FiCornerDownLeft, FiDelete, FiEye, FiEyeOff } from 'react-icons/fi'
+import { NoteValue } from 'components/Game/types'
+import { useContext, useEffect, useCallback } from 'react'
+import styled from 'styled-components'
+import { FiCircle, FiPlay, FiSkipBack, FiSquare } from 'react-icons/fi'
 import { validate } from 'components/Game/utils'
 import { Button } from 'components/Button'
+import { Key, Octave } from 'components/Game/Keyboard/Octave'
 
-export function Keyboard(): JSX.Element {
-  const [usingKeyboard, setUsingKeyboard] = useState(false)
-
+type KeyboardProps = {
+  play: () => void
+  stop: () => void
+  loading: boolean
+  playing: boolean
+}
+export function Keyboard({
+  play,
+  stop,
+  loading,
+  playing,
+}: KeyboardProps): JSX.Element {
   const {
     currentAttemptIndex,
     setCurrentAttemptIndex,
     attempts,
     setAttempts,
-    melodyLength,
+    melody,
     endGame,
     gameOverResult,
-    challenge,
   } = useContext(GameContext)
 
   const gameIsOver = gameOverResult !== null
   const currentAttempt = attempts[currentAttemptIndex]
 
-  const removeLastNote = useCallback(() => {
+  const reset = useCallback(() => {
     if (currentAttempt.length === 0) {
       return
     }
 
     setAttempts((state) => {
       const updatedAttempts = [...state]
-      const updatedAttempt = [...currentAttempt]
-      updatedAttempt.pop()
 
-      updatedAttempts[currentAttemptIndex] = updatedAttempt
+      updatedAttempts[currentAttemptIndex] = []
 
       return updatedAttempts
     })
   }, [currentAttempt, currentAttemptIndex, setAttempts])
 
   const attemptChallenge = useCallback(() => {
-    // Filled the row with notes
-    if (currentAttempt.length === melodyLength) {
-      const updatedAttempt = validate(currentAttempt, challenge.melody)
+    if (currentAttempt.length === melody.length) {
+      const updatedAttempt = validate(currentAttempt, melody)
 
       setAttempts((state) => {
         const updatedAttempts = [...state]
@@ -73,22 +79,20 @@ export function Keyboard(): JSX.Element {
     attempts.length,
     currentAttempt,
     currentAttemptIndex,
-    melodyLength,
+    melody,
     setAttempts,
     setCurrentAttemptIndex,
     endGame,
-    challenge.melody,
   ])
 
   useEffect(() => {
     function keyDown(this: Document, event: KeyboardEvent): void {
-      if (event.key === 'Backspace') {
-        event.preventDefault()
-        clickButton(event.key as ComputerKey)
-        return
-      }
-
-      if (event.key === 'Enter' && !event.repeat) {
+      if (
+        (event.key === 'Backspace' ||
+          event.key === 'Enter' ||
+          event.key === ' ') &&
+        !event.repeat
+      ) {
         event.preventDefault()
         clickButton(event.key as ComputerKey)
         return
@@ -117,7 +121,7 @@ export function Keyboard(): JSX.Element {
   }, [currentAttempt.length])
 
   function addNote(note: NoteValue): void {
-    if (currentAttempt.length < melodyLength) {
+    if (currentAttempt.length < melody.length) {
       setAttempts((state) => {
         const updatedAttempts = [...state]
         const updatedAttempt = [...currentAttempt]
@@ -131,227 +135,69 @@ export function Keyboard(): JSX.Element {
   }
 
   return (
-    <Container>
+    <>
       <Buttons>
-        <Button
-          id="keyToggleKeyboard"
-          onClick={() => setUsingKeyboard((state) => !state)}
-          title={usingKeyboard ? 'hide key map' : 'show key map'}
-          type="button"
-        >
-          {usingKeyboard ? (
-            <FiEye size={48} color="black" />
-          ) : (
-            <FiEyeOff size={48} color="black" />
-          )}
-        </Button>
+        {loading ? (
+          <>...loading</>
+        ) : (
+          <>
+            <Button
+              id="keyBackspace"
+              onClick={reset}
+              type="button"
+              title="reset"
+              disabled={gameIsOver}
+            >
+              <FiSkipBack size={48} color="black" />
+            </Button>
+            {playing ? (
+              <Button id="keySpace" onClick={stop} type="button" title="stop">
+                <FiSquare size={48} color="black" />
+              </Button>
+            ) : (
+              <Button id="keySpace" onClick={play} type="button" title="play">
+                <FiPlay size={48} color="black" />
+              </Button>
+            )}
+            <Button
+              id="keyEnter"
+              onClick={attemptChallenge}
+              type="submit"
+              title="record"
+              disabled={gameIsOver}
+            >
+              <FiCircle size={48} color="black" />
+            </Button>
+          </>
+        )}
       </Buttons>
-      <Keys>
-        <WhiteKey
-          id="keyC"
-          onClick={() => addNote('C')}
-          type="button"
-          disabled={gameIsOver}
-        >
-          {usingKeyboard ? 'A' : 'C'}
-        </WhiteKey>
-        <BlackKey
-          id="keyC#"
-          onClick={() => addNote('C#')}
-          type="button"
-          disabled={gameIsOver}
-        >
-          {usingKeyboard ? 'W' : 'C#'}
-        </BlackKey>
-        <WhiteKey
-          id="keyD"
-          onClick={() => addNote('D')}
-          type="button"
-          disabled={gameIsOver}
-          $offset
-        >
-          {usingKeyboard ? 'S' : 'D'}
-        </WhiteKey>
-        <BlackKey
-          id="keyD#"
-          onClick={() => addNote('D#')}
-          type="button"
-          disabled={gameIsOver}
-        >
-          {usingKeyboard ? 'E' : 'D#'}
-        </BlackKey>
-        <WhiteKey
-          id="keyE"
-          onClick={() => addNote('E')}
-          type="button"
-          disabled={gameIsOver}
-          $offset
-        >
-          {usingKeyboard ? 'D' : 'E'}
-        </WhiteKey>
-        <WhiteKey
-          id="keyF"
-          onClick={() => addNote('F')}
-          type="button"
-          disabled={gameIsOver}
-        >
-          F
-        </WhiteKey>
-        <BlackKey
-          id="keyF#"
-          onClick={() => addNote('F#')}
-          type="button"
-          disabled={gameIsOver}
-        >
-          {usingKeyboard ? 'T' : 'F#'}
-        </BlackKey>
-        <WhiteKey
-          id="keyG"
-          onClick={() => addNote('G')}
-          type="button"
-          disabled={gameIsOver}
-          $offset
-        >
-          G
-        </WhiteKey>
-        <BlackKey
-          id="keyG#"
-          onClick={() => addNote('G#')}
-          type="button"
-          disabled={gameIsOver}
-        >
-          {usingKeyboard ? 'Y' : 'G#'}
-        </BlackKey>
-        <WhiteKey
-          id="keyA"
-          onClick={() => addNote('A')}
-          type="button"
-          disabled={gameIsOver}
-          $offset
-        >
-          {usingKeyboard ? 'H' : 'A'}
-        </WhiteKey>
-        <BlackKey
-          id="keyA#"
-          onClick={() => addNote('A#')}
-          type="button"
-          disabled={gameIsOver}
-        >
-          {usingKeyboard ? 'U' : 'A#'}
-        </BlackKey>
-        <WhiteKey
-          id="keyB"
-          onClick={() => addNote('B')}
-          type="button"
-          disabled={gameIsOver}
-          $offset
-        >
-          {usingKeyboard ? 'J' : 'B'}
-        </WhiteKey>
-      </Keys>
-      <Buttons>
-        <Button
-          id="keyBackspace"
-          onClick={removeLastNote}
-          type="button"
-          title="backspace"
-          disabled={gameIsOver}
-        >
-          <FiDelete size={48} color="black" />
-        </Button>
-        <Button
-          id="keyEnter"
-          onClick={attemptChallenge}
-          type="submit"
-          title="submit"
-          disabled={gameIsOver}
-        >
-          <FiCornerDownLeft size={48} color="black" />
-        </Button>
-      </Buttons>
-    </Container>
+      <Container>
+        <Keys>
+          <Octave octave={0} addNote={addNote} disabled={gameIsOver} />
+          <Octave octave={1} addNote={addNote} disabled={gameIsOver} />
+          <Octave octave={2} addNote={addNote} disabled={gameIsOver} />
+          <Octave octave={3} addNote={addNote} disabled={gameIsOver} />
+          <Octave octave={4} addNote={addNote} disabled={gameIsOver} />
+          <Octave octave={5} addNote={addNote} disabled={gameIsOver} />
+          <Octave octave={6} addNote={addNote} disabled={gameIsOver} />
+          <Octave octave={7} addNote={addNote} disabled={gameIsOver} />
+          <Octave octave={8} addNote={addNote} disabled={gameIsOver} />
+        </Keys>
+      </Container>
+    </>
   )
 }
 
 const Container = styled.div`
   display: flex;
+  width: 100vw;
+  overflow-x: scroll;
+  padding: 0 16px;
 `
 
 const Buttons = styled.div`
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-`
-
-const Key = styled.button`
-  position: relative;
-  float: left;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding: 0.5rem 0;
-  user-select: none;
-
-  :not(:disabled) {
-    cursor: pointer;
-  }
-`
-
-type WhiteKeyProps = {
-  $offset?: boolean
-}
-const WhiteKey = styled(Key)<WhiteKeyProps>`
-  height: 12.5rem;
-  width: 2.5rem;
-  border-left: 1px solid hsl(0, 0%, 73%);
-  border-bottom: 1px solid hsl(0, 0%, 73%);
-  border-radius: 0 0 5px 5px;
-  box-shadow: -1px 0 0 var(--white-80) inset, 0 0 5px hsl(0, 0%, 80%) inset,
-    0 0 3px var(--black-20);
-  background: linear-gradient(to bottom, hsl(0, 0%, 93%) 0%, white 100%);
-  color: var(--black-30);
-
-  &.active:not(:disabled),
-  &:active:not(:disabled) {
-    border-top: 1px solid hsl(0, 0%, 47%);
-    border-left: 1px solid hsl(0, 0%, 60%);
-    border-bottom: 1px solid hsl(0, 0%, 60%);
-    box-shadow: 2px 0 3px var(--black-10) inset,
-      -5px 5px 20px var(--black-20) inset, 0 0 3px var(--black-20);
-    background: linear-gradient(to bottom, white 0%, hsl(0, 0%, 91%) 100%);
-    outline: none;
-  }
-
-  ${({ $offset }) =>
-    $offset &&
-    css`
-      margin: 0 0 0 -1rem;
-    `}
-`
-
-const BlackKey = styled(Key)`
-  height: 8rem;
-  width: 2rem;
-  margin: 0 0 0 -1rem;
-  z-index: 1;
-  border: 1px solid black;
-  border-radius: 0 0 3px 3px;
-  box-shadow: -1px -1px 2px var(--white-20) inset,
-    0 -5px 2px 3px var(--black-60) inset, 0 2px 4px var(--black-50);
-  background: linear-gradient(45deg, hsl(0, 0%, 13%) 0%, hsl(0, 0%, 33%) 100%);
-  color: var(--white-50);
-
-  &.active:not(:disabled),
-  &:active:not(:disabled) {
-    box-shadow: -1px -1px 2px var(--white-20) inset,
-      0 -2px 2px 3px var(--black-60) inset, 0 1px 2px var(--black-50);
-    background: linear-gradient(
-      to right,
-      hsl(0, 0%, 27%) 0%,
-      hsl(0, 0%, 13%) 100%
-    );
-    outline: none;
-  }
 `
 
 const Keys = styled.div`

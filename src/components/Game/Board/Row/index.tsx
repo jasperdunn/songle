@@ -10,11 +10,11 @@ type RowProps = {
   isPreviousAttempt: boolean
 }
 export function Row({ attempt, isPreviousAttempt }: RowProps): JSX.Element {
-  const { melodyLength, notePlayed } = useContext(GameContext)
-  const availableTiles = Array.from(Array(melodyLength).keys())
+  const { melody, notePlayed } = useContext(GameContext)
+  const availableTiles = Array.from(Array(melody.length).keys())
 
   return (
-    <Grid melodyLength={melodyLength}>
+    <Grid melodyLength={melody.length}>
       {availableTiles.map((n) => {
         if (!attempt[n]) {
           return (
