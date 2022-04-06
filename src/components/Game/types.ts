@@ -26,3 +26,8 @@ export type Note = {
 }
 
 export type GameOverResult = 'success' | 'fail'
+
+export type LocalStorage = {
+  attempts: Note[][]
+  currentAttemptIndex: number
+}

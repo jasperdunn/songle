@@ -24,3 +24,14 @@ export function validate(
 
   return validatedNotes
 }
+
+export function getLocalStorage<Obj extends Record<string, unknown>>(
+  item: keyof Obj
+): Obj[keyof Obj] | null {
+  const attemptsString = localStorage.getItem('attempts')
+  if (attemptsString) {
+    return JSON.parse(attemptsString)
+  }
+
+  return null
+}

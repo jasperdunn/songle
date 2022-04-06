@@ -5,8 +5,10 @@ import { useMidiPlayer } from 'components/Game/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
 import { Player } from 'components/Game/Player'
 import { Note, Challenge, GameOverResult } from 'components/Game/types'
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
+import { LocalStorage } from 'components/Game/types'
+import { getLocalStorage } from './utils'
 
 export function Game(): JSX.Element {
   const numberOfPossibleAttempts = 6
@@ -19,8 +21,12 @@ export function Game(): JSX.Element {
   }
 
   const [currentAttemptIndex, setCurrentAttemptIndex] = useState<number>(0)
-  const [attempts, setAttempts] = useState<Note[][]>(() =>
-    Array.from(Array(numberOfPossibleAttempts)).map(() => [])
+  const emptyAttempts: Note[][] = useMemo(
+    () => Array.from(Array(numberOfPossibleAttempts)).map(() => []),
+    [numberOfPossibleAttempts]
+  )
+  const [attempts, setAttempts] = useState<Note[][]>(
+    () => getLocalStorage<LocalStorage>('attempts') || emptyAttempts
   )
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [gameOverResult, setGameOverResult] = useState<GameOverResult | null>(
@@ -32,9 +38,18 @@ export function Game(): JSX.Element {
     currentAttemptIndex
   )
 
+  useEffect(() => {
+    localStorage.setItem('attempts', JSON.stringify(attempts))
+  }, [attempts])
+
   function endGame(result: GameOverResult): void {
     setModalIsOpen(true)
     setGameOverResult(result)
+  }
+
+  function clear(): void {
+    setAttempts(emptyAttempts)
+    localStorage.clear()
   }
 
   return (
@@ -53,6 +68,11 @@ export function Game(): JSX.Element {
       }}
     >
       <Container>
+        {process.env.NODE_ENV === 'development' && (
+          <button onClick={clear} type="button">
+            clear
+          </button>
+        )}
         <Player play={play} stop={stop} loading={loading} playing={playing} />
         <Board />
         <Keyboard />
