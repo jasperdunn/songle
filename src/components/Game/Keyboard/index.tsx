@@ -5,7 +5,7 @@ import {
   keyUp,
   clickButton,
 } from 'components/Game/Keyboard/utils'
-import { Note, NoteValue } from 'components/Game/types'
+import { NoteValue } from 'components/Game/types'
 import { useContext, useEffect, useCallback, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { FiCornerDownLeft, FiDelete, FiEye, FiEyeOff } from 'react-icons/fi'

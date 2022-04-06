@@ -4,10 +4,14 @@ import { GameOverModal } from 'components/Game/GameOverModal'
 import { useMidiPlayer } from 'components/Game/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
 import { Player } from 'components/Game/Player'
-import { Note, Challenge, GameOverResult } from 'components/Game/types'
+import {
+  Challenge,
+  GameOverResult,
+  Attempt,
+  LocalStorage,
+} from 'components/Game/types'
 import { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
-import { LocalStorage } from 'components/Game/types'
 import { getLocalStorage } from './utils'
 
 export function Game(): JSX.Element {
@@ -21,11 +25,11 @@ export function Game(): JSX.Element {
   }
 
   const [currentAttemptIndex, setCurrentAttemptIndex] = useState<number>(0)
-  const emptyAttempts: Note[][] = useMemo(
+  const emptyAttempts: Attempt[] = useMemo(
     () => Array.from(Array(numberOfPossibleAttempts)).map(() => []),
     [numberOfPossibleAttempts]
   )
-  const [attempts, setAttempts] = useState<Note[][]>(
+  const [attempts, setAttempts] = useState<Attempt[]>(
     () => getLocalStorage<LocalStorage>('attempts') || emptyAttempts
   )
   const [modalIsOpen, setModalIsOpen] = useState(false)
