@@ -1,4 +1,4 @@
-import { LocalStorage, Note, NoteValue } from 'components/Game/types'
+import { Attempt, Note, NoteValue } from 'components/Game/types'
 
 export function validate(
   attemptedSequence: Note[],
@@ -23,6 +23,11 @@ export function validate(
   }
 
   return validatedNotes
+}
+
+type LocalStorage = {
+  attempts: Attempt[]
+  currentAttemptIndex: number
 }
 
 export function getLocalStorage<K extends keyof LocalStorage>(
