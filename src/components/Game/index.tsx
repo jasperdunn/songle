@@ -7,7 +7,7 @@ import { Player } from 'components/Game/Player'
 import { Challenge, GameOverResult, Attempt } from 'components/Game/types'
 import { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
-import { getLocalStorage, setLocalStorage } from './utils'
+import { getLocalStorage, setLocalStorage } from 'common/storage'
 
 export function Game(): JSX.Element {
   const numberOfPossibleAttempts = 6
