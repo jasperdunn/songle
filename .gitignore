@@ -4,6 +4,7 @@ node_modules/
 # production
 build/
 dist/
+dist-ssr/
 
 # misc
 .DS_Store
@@ -12,4 +13,5 @@ dist/
 .env.test.local
 .env.production.local
 
-yarn-error.log
+# logs
+*.log
