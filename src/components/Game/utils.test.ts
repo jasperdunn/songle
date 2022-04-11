@@ -10,7 +10,9 @@ each`
 `.describe(
   'validate',
   ({ attemptedSequence, expected, challengeSequence }: ValidateParams) => {
-    it(`"${attemptedSequence}" from "${challengeSequence}" returns "${expected}" `, () => {
+    it(`"${JSON.stringify(attemptedSequence)}" from "${JSON.stringify(
+      challengeSequence
+    )}" returns "${JSON.stringify(expected)}" `, () => {
       const actual = validate(attemptedSequence, challengeSequence)
 
       expect(actual).toStrictEqual(expected)
