@@ -7,8 +7,8 @@ export type Octave = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 export type NoteValue = `${NaturalNote | SharpNote | FlatNote}${Octave}`
 
 export type Challenge = {
-  title: ReactNode
-  artist: ReactNode
+  title: string
+  artist: string
   spotifyUrl: string
   youtubeUrl: string
   appleMusicUrl: string

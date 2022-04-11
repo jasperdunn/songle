@@ -11,13 +11,7 @@ export function Game(): JSX.Element {
   const numberOfPossibleAttempts = 6
   const challenge: Challenge = {
     artist: 'Mark Ronson',
-    title: (
-      <>
-        Uptown Funk
-        <br />
-        <small>(feat. Bruno Mars)</small>
-      </>
-    ),
+    title: 'Uptown Funk (feat. Bruno Mars)',
     spotifyUrl:
       'https://open.spotify.com/embed/track/32OlwWuMpZ6b0aN2RZOeMS?utm_source=generator',
     youtubeUrl: 'https://www.youtube.com/embed/OPf0YbXqDm0',
