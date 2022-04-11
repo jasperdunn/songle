@@ -42,7 +42,7 @@ export function Modal({
 
   return createPortal(
     <AnimatePresence>
-      {isOpen && (
+      {isOpen ? (
         <Overlay
           key="modal"
           initial="hide"
@@ -85,7 +85,7 @@ export function Modal({
             </Dialog>
           </PositioningGroup>
         </Overlay>
-      )}
+      ) : null}
     </AnimatePresence>,
     modalRootElement
   )
