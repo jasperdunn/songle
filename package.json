@@ -6,11 +6,12 @@
   "scripts": {
     "build": "tsc && vite build",
     "depcheck": "pnpm dlx depcheck",
-    "preinstall": "npx only-allow pnpm",
+    "preinstall": "npx -y only-allow pnpm",
     "preview": "vite preview",
     "start": "vite",
     "test": "vitest",
-    "test-ui": "vitest --ui"
+    "test-ui": "vitest --ui",
+    "update-browserslist": "pnpm dlx browserslist@latest --update-db"
   },
   "dependencies": {
     "@babel/core": "^7.17.9",
@@ -41,6 +42,10 @@
     "vite-tsconfig-paths": "^3.4.1",
     "vitest": "^0.9.3",
     "web-vitals": "^2.1.4"
+  },
+  "engines": {
+    "node": "^16.14.2",
+    "pnpm": "^6.32.11"
   },
   "browserslist": {
     "production": [
