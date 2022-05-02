@@ -4,13 +4,14 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsc && vite build",
-    "depcheck": "pnpm dlx depcheck",
     "preinstall": "npx -y only-allow pnpm",
-    "preview": "vite preview",
     "start": "vite",
     "test": "vitest",
     "test-ui": "vitest --ui",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "devtools": "pnpm exec scripts/devtools-html-mod.sh && pnpm dlx react-devtools",
+    "depcheck": "pnpm dlx depcheck",
     "update-browserslist": "pnpm dlx browserslist@latest --update-db"
   },
   "dependencies": {
