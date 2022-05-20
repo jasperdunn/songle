@@ -1,8 +1,8 @@
-import { NoteValue, Note } from 'components/Game/types'
+import { NoteValue, Attempt } from 'components/Game/types'
 export type ValidateParams = {
-  attemptedSequence: Note[]
+  attemptedSequence: Attempt
   challengeSequence: NoteValue[]
-  expected: Note[]
+  expected: Attempt
 }
 
 export const attempts: ValidateParams[] = [

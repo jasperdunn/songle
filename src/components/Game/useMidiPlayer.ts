@@ -1,12 +1,12 @@
 import { Midi } from '@tonejs/midi'
 import { usePreviousValue } from 'common/usePreviousValue'
-import { Note, NoteValue } from 'components/Game/types'
+import { Attempt, NoteValue } from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MonoSynth, now, Part, start, Transport } from 'tone'
 
 export function useMidiPlayer(
   srcUrl: string,
-  attempts: Note[][],
+  attempts: Attempt[],
   currentAttemptIndex: number
 ): {
   play: () => void

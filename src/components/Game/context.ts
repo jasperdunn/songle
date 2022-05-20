@@ -1,16 +1,16 @@
 import {
-  Note,
   Challenge,
   GameOverResult,
   NoteValue,
+  Attempt,
 } from 'components/Game/types'
 import { createContext } from 'react'
 
 type GameContextType = {
   currentAttemptIndex: number
   setCurrentAttemptIndex: React.Dispatch<React.SetStateAction<number>>
-  attempts: Note[][]
-  setAttempts: React.Dispatch<React.SetStateAction<Note[][]>>
+  attempts: Attempt[]
+  setAttempts: React.Dispatch<React.SetStateAction<Attempt[]>>
   melody: NoteValue[]
   endGame: (result: GameOverResult) => void
   gameOverResult: GameOverResult | null

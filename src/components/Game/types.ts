@@ -1,5 +1,3 @@
-import { ReactNode } from 'react'
-
 type NaturalNote = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G'
 type SharpNote = 'A#' | 'C#' | 'D#' | 'F#' | 'G#'
 type FlatNote = 'Ab' | 'Bb' | 'Db' | 'Eb' | 'Gb'
@@ -28,5 +26,7 @@ export type Note = {
   value: NoteValue
   hint?: NoteHint
 }
+
+export type Attempt = Note[]
 
 export type GameOverResult = 'success' | 'fail'

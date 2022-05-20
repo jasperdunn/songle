@@ -1,12 +1,12 @@
 import { theme } from 'common/theme'
 import { Tile } from 'components/Game/Board/Row/Tile'
 import { GameContext } from 'components/Game/context'
-import { Note } from 'components/Game/types'
+import { Attempt } from 'components/Game/types'
 import { useContext } from 'react'
 import styled, { css } from 'styled-components'
 
 type RowProps = {
-  attempt: Note[]
+  attempt: Attempt
   isPreviousAttempt: boolean
 }
 export function Row({ attempt, isPreviousAttempt }: RowProps): JSX.Element {

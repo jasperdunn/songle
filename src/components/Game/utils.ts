@@ -1,10 +1,10 @@
-import { Note, NoteValue } from 'components/Game/types'
+import { Attempt, NoteValue } from 'components/Game/types'
 
 export function validate(
-  attemptedSequence: Note[],
+  attemptedSequence: Attempt,
   challengeSequence: NoteValue[]
-): Note[] {
-  const validatedNotes: Note[] = []
+): Attempt {
+  const validatedNotes: Attempt = []
 
   for (let i = 0; i < attemptedSequence.length; i++) {
     const note = attemptedSequence[i]
