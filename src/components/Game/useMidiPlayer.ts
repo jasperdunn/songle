@@ -1,20 +1,24 @@
 import { Midi } from '@tonejs/midi'
 import { usePreviousValue } from 'common/usePreviousValue'
-import { Attempt, NoteValue } from 'components/Game/types'
+import { Attempt, Melody, NoteValue } from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MonoSynth, now, Part, start, Transport } from 'tone'
 
-export function useMidiPlayer(
-  srcUrl: string,
-  attempts: Attempt[],
+export function useMidiPlayer({
+  srcUrl,
+  attempts,
+  currentAttemptIndex,
+}: {
+  srcUrl: string
+  attempts: Attempt[]
   currentAttemptIndex: number
-): {
+}): {
   play: () => void
   stop: () => void
   loading: boolean
   playing: boolean
   notePlayed: number | null
-  melody: NoteValue[]
+  melody: Melody
 } {
   const [loading, setLoading] = useState(true)
   const [playing, setPlaying] = useState(false)
@@ -23,7 +27,7 @@ export function useMidiPlayer(
   const synthRef = useRef<MonoSynth>()
   const partRef = useRef<Part>()
   const prevAttemptIndex = usePreviousValue(currentAttemptIndex)
-  const [melody, setMelody] = useState<NoteValue[]>([])
+  const [melody, setMelody] = useState<Melody>([])
 
   const loadMidi = useCallback(async () => {
     try {
