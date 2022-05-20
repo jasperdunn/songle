@@ -13,6 +13,7 @@ export const computerKeys = [
   'u',
   'Enter',
   'Backspace',
+  ' ',
 ] as const
 
 export type ComputerKey = typeof computerKeys[number]
@@ -93,6 +94,9 @@ function getKeyIdFromComputerKey(key: ComputerKey): string | null {
 
     case 'Backspace':
       return 'keyBackspace'
+
+    case ' ':
+      return 'keySpace'
 
     default:
       return null

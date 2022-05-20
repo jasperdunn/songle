@@ -3,19 +3,21 @@ import { GameContext } from 'components/Game/context'
 import { GameOverModal } from 'components/Game/GameOverModal'
 import { useMidiPlayer } from 'components/Game/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
-import { Player } from 'components/Game/Player'
-import { Challenge, GameOverResult, Attempt } from 'components/Game/types'
-import { useState, useEffect, useMemo } from 'react'
+import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
+import { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { getLocalStorage, setLocalStorage } from 'common/storage'
 
 export function Game(): JSX.Element {
   const numberOfPossibleAttempts = 6
   const challenge: Challenge = {
-    artist: 'Bruno Mars',
-    title: 'Uptown Funk',
-    bpm: 115,
-    melody: ['D', 'D', 'G', 'F', 'D', 'G', 'F', 'C', 'D'],
+    artist: 'Mark Ronson',
+    title: 'Uptown Funk (feat. Bruno Mars)',
+    spotifyUrl:
+      'https://open.spotify.com/embed/track/32OlwWuMpZ6b0aN2RZOeMS?utm_source=generator',
+    youtubeUrl: 'https://www.youtube.com/embed/OPf0YbXqDm0',
+    appleMusicUrl:
+      'https://embed.music.apple.com/au/album/uptown-funk-feat-bruno-mars/943946661?i=943946671',
     midiUrl: 'https://songle.blob.core.windows.net/midi/uptown-funk.mid',
   }
 
@@ -31,7 +33,7 @@ export function Game(): JSX.Element {
   const [gameOverResult, setGameOverResult] = useState<GameOverResult | null>(
     null
   )
-  const { loading, play, stop, playing, notePlayed } = useMidiPlayer(
+  const { loading, play, stop, playing, notePlayed, melody } = useMidiPlayer(
     challenge.midiUrl,
     attempts,
     currentAttemptIndex
@@ -58,7 +60,7 @@ export function Game(): JSX.Element {
         setCurrentAttemptIndex,
         attempts,
         setAttempts,
-        melodyLength: challenge.melody.length,
+        melody,
         endGame,
         gameOverResult,
         modalIsOpen,
@@ -72,9 +74,8 @@ export function Game(): JSX.Element {
             clear
           </button>
         )}
-        <Player play={play} stop={stop} loading={loading} playing={playing} />
         <Board />
-        <Keyboard />
+        <Keyboard play={play} stop={stop} loading={loading} playing={playing} />
         <GameOverModal onHide={() => setModalIsOpen(false)} />
       </Container>
     </GameContext.Provider>

@@ -1,13 +1,15 @@
 type NaturalNote = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G'
 type SharpNote = 'A#' | 'C#' | 'D#' | 'F#' | 'G#'
 type FlatNote = 'Ab' | 'Bb' | 'Db' | 'Eb' | 'Gb'
-export type NoteValue = NaturalNote | SharpNote | FlatNote
+export type Octave = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+export type NoteValue = `${NaturalNote | SharpNote | FlatNote}${Octave}`
 
 export type Challenge = {
-  melody: NoteValue[]
   title: string
   artist: string
-  bpm: number
+  spotifyUrl: string
+  youtubeUrl: string
+  appleMusicUrl: string
   midiUrl: string
 }
 
@@ -24,6 +26,8 @@ export type Note = {
   value: NoteValue
   hint?: NoteHint
 }
+
+export type Attempt = Note[]
 
 export type GameOverResult = 'success' | 'fail'
 

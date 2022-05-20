@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { FiX } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
 import styled from 'styled-components'
+import { theme } from 'common/theme'
 
 type ModalProps = {
   isOpen: boolean
@@ -41,7 +42,7 @@ export function Modal({
 
   return createPortal(
     <AnimatePresence>
-      {isOpen && (
+      {isOpen ? (
         <Overlay
           key="modal"
           initial="hide"
@@ -84,7 +85,7 @@ export function Modal({
             </Dialog>
           </PositioningGroup>
         </Overlay>
-      )}
+      ) : null}
     </AnimatePresence>,
     modalRootElement
   )
@@ -92,8 +93,14 @@ export function Modal({
 
 const Dialog = styled(motion.div)`
   background-color: hsl(0, 0%, 90%);
-  width: 300px;
+  width: 320px;
   padding: 16px;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  @media ${theme.breakpointUp.tablet} {
+    width: 600px;
+  }
 `
 
 const PositioningGroup = styled.div`
@@ -113,6 +120,7 @@ const Overlay = styled(motion.div)`
   top: 0;
   left: 0;
   z-index: 1;
+  backdrop-filter: blur(6px);
 `
 
 const Content = styled.div`
