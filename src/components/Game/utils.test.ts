@@ -1,13 +1,26 @@
-import { validate } from 'components/Game/utils'
-import { test, describe, expect } from 'vitest'
-import { attempts, ValidateParams } from './utils.test-data'
+import { calculateCurrentAttemptIndex, validate } from 'components/Game/utils'
+import { test, expect } from 'vitest'
+import {
+  validateData,
+  calculateCurrentAttemptIndexData,
+} from './utils.test-data'
 
-describe('validate', () => {
-  test.each(attempts)(
-    '%j from %j returns %j',
-    ({ attemptedSequence, expected, challengeSequence }: ValidateParams) => {
-      const actual = validate(attemptedSequence, challengeSequence)
-      expect(actual).toStrictEqual(expected)
-    }
-  )
-})
+test.each(validateData)(
+  'validate(%j, %j,) -> %j',
+  ({ attempt, melody, expected }) => {
+    const actual = validate(attempt, melody)
+    expect(actual).toStrictEqual(expected)
+  }
+)
+
+test.each(calculateCurrentAttemptIndexData)(
+  'calculateCurrentAttemptIndex - %# - %j',
+  ({ attempts, melodyLength, numberOfPossibleAttempts, expected }) => {
+    const actual = calculateCurrentAttemptIndex(
+      attempts,
+      melodyLength,
+      numberOfPossibleAttempts
+    )
+    expect(actual).toStrictEqual(expected)
+  }
+)

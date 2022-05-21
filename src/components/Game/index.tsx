@@ -1,14 +1,15 @@
 import { Board } from 'components/Game/Board'
 import { GameContext } from 'components/Game/context'
 import { GameOverModal } from 'components/Game/GameOverModal'
-import { useMidiPlayer } from 'components/Game/useMidiPlayer'
+import { useMidiPlayer } from 'hooks/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
 import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { useLocalStorage } from 'common/storage'
+import { useCalculateCurrentAttemptIndex } from 'components/Game/utils'
 
 export function Game(): JSX.Element {
-  const numberOfPossibleAttempts = 6
   const challenge: Challenge = {
     artist: 'Mark Ronson',
     title: 'Uptown Funk (feat. Bruno Mars)',
@@ -20,23 +21,50 @@ export function Game(): JSX.Element {
     midiUrl: 'https://songle.blob.core.windows.net/midi/uptown-funk.mid',
   }
 
-  const [currentAttemptIndex, setCurrentAttemptIndex] = useState<number>(0)
-  const [attempts, setAttempts] = useState<Attempt[]>(() =>
-    Array.from(Array(numberOfPossibleAttempts)).map(() => [])
+  const numberOfPossibleAttempts = 6
+  const emptyAttempts: Attempt[] = useMemo(
+    () => Array(numberOfPossibleAttempts).fill([]),
+    [numberOfPossibleAttempts]
   )
-  const [modalIsOpen, setModalIsOpen] = useState(false)
-  const [gameOverResult, setGameOverResult] = useState<GameOverResult | null>(
+
+  const [attempts, setAttempts] = useLocalStorage('attempts', emptyAttempts)
+  const [gameOverResult, setGameOverResult] = useLocalStorage(
+    'gameOverResult',
     null
   )
+  const [currentAttemptIndex, setCurrentAttemptIndex] = useLocalStorage(
+    'currentAttemptIndex',
+    0
+  )
+
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+
   const { loading, play, stop, playing, notePlayed, melody } = useMidiPlayer(
     challenge.midiUrl,
     attempts,
     currentAttemptIndex
   )
 
+  useCalculateCurrentAttemptIndex(
+    melody.length,
+    attempts,
+    numberOfPossibleAttempts,
+    setCurrentAttemptIndex
+  )
+
+  useEffect(() => {
+    if (gameOverResult) {
+      setModalIsOpen(true)
+    }
+  }, [gameOverResult])
+
   function endGame(result: GameOverResult): void {
-    setModalIsOpen(true)
     setGameOverResult(result)
+  }
+
+  function resetGame(): void {
+    localStorage.clear()
+    window.location.reload()
   }
 
   return (
@@ -55,6 +83,11 @@ export function Game(): JSX.Element {
       }}
     >
       <Container>
+        {process.env.NODE_ENV === 'development' && (
+          <button onClick={resetGame} type="button">
+            RESET GAME
+          </button>
+        )}
         <Board />
         <Keyboard play={play} stop={stop} loading={loading} playing={playing} />
         <GameOverModal onHide={() => setModalIsOpen(false)} />

@@ -2,6 +2,7 @@ import { normalizedStyles, globalStyles } from 'common/styles'
 import styled, { createGlobalStyle } from 'styled-components'
 import { theme } from 'common/theme'
 import { Game } from 'components/Game'
+import { ErrorBoundary } from 'components/ErrorBoundary'
 
 const GlobalStyle = createGlobalStyle`
 ${normalizedStyles}
@@ -17,7 +18,9 @@ export function App(): JSX.Element {
           <Title>songle</Title>
         </Header>
         <Main>
-          <Game />
+          <ErrorBoundary>
+            <Game />
+          </ErrorBoundary>
         </Main>
       </Layout>
     </>
