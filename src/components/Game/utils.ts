@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction, useCallback, useEffect } from 'react'
 import { findLastIndex } from 'common/utils'
 import { Attempt, Melody } from 'components/Game/types'
 
@@ -23,7 +24,7 @@ export function validate(attempt: Attempt, melody: Melody): Attempt {
   return validatedNotes
 }
 
-export function getCurrentAttemptIndex(
+export function calculateCurrentAttemptIndex(
   attempts: Attempt[],
   melodyLength: number,
   numberOfPossibleAttempts: number
@@ -42,4 +43,27 @@ export function getCurrentAttemptIndex(
   }
 
   return lastCompletedIndex
+}
+
+export function useCalculateCurrentAttemptIndex(
+  melodyLength: number,
+  attempts: Attempt[],
+  numberOfPossibleAttempts: number,
+  setCurrentAttemptIndex: Dispatch<SetStateAction<number>>
+): void {
+  const updateCurrentAttemptIndex = useCallback(() => {
+    if (melodyLength) {
+      setCurrentAttemptIndex(
+        calculateCurrentAttemptIndex(
+          attempts,
+          melodyLength,
+          numberOfPossibleAttempts
+        )
+      )
+    }
+  }, [attempts, melodyLength, setCurrentAttemptIndex, numberOfPossibleAttempts])
+
+  useEffect(() => {
+    updateCurrentAttemptIndex()
+  }, [updateCurrentAttemptIndex])
 }

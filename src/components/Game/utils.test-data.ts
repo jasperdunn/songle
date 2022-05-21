@@ -1,116 +1,117 @@
 import { Melody, Attempt } from 'components/Game/types'
 
-type GetCurrentAttemptIndexParams = {
+type CalculateCurrentAttemptIndexParams = {
   description: string
   attempts: Attempt[]
   melodyLength: number
   numberOfPossibleAttempts: number
   expected: number
 }
-export const getCurrentAttemptIndexData: GetCurrentAttemptIndexParams[] = [
-  {
-    description: `Returns the first index, when the first attempt isn't filled.`,
-    attempts: [[{ value: 'D1' }, { value: 'D1' }], [], []],
-    melodyLength: 3,
-    numberOfPossibleAttempts: 3,
-    expected: 0,
-  },
-  {
-    description: `Returns the first index, when the first attempt is filled but hasn't been recorded.`,
-    attempts: [[{ value: 'D1' }, { value: 'D1' }, { value: 'D#1' }], [], []],
-    melodyLength: 3,
-    numberOfPossibleAttempts: 3,
-    expected: 0,
-  },
-  {
-    description:
-      'Returns the second index, when the first attempt has been recorded.',
-    attempts: [
-      [
-        { value: 'D1', hint: 2 },
-        { value: 'D1', hint: 2 },
-        { value: 'D#1', hint: 0 },
+export const calculateCurrentAttemptIndexData: CalculateCurrentAttemptIndexParams[] =
+  [
+    {
+      description: `Returns the first index, when the first attempt isn't filled.`,
+      attempts: [[{ value: 'D1' }, { value: 'D1' }], [], []],
+      melodyLength: 3,
+      numberOfPossibleAttempts: 3,
+      expected: 0,
+    },
+    {
+      description: `Returns the first index, when the first attempt is filled but hasn't been recorded.`,
+      attempts: [[{ value: 'D1' }, { value: 'D1' }, { value: 'D#1' }], [], []],
+      melodyLength: 3,
+      numberOfPossibleAttempts: 3,
+      expected: 0,
+    },
+    {
+      description:
+        'Returns the second index, when the first attempt has been recorded.',
+      attempts: [
+        [
+          { value: 'D1', hint: 2 },
+          { value: 'D1', hint: 2 },
+          { value: 'D#1', hint: 0 },
+        ],
+        [],
+        [],
       ],
-      [],
-      [],
-    ],
-    melodyLength: 3,
-    numberOfPossibleAttempts: 3,
-    expected: 1,
-  },
-  {
-    description: `Returns the second index, when the second attempt isn't filled`,
-    attempts: [
-      [
-        { value: 'D1', hint: 2 },
-        { value: 'D1', hint: 2 },
-        { value: 'D#1', hint: 1 },
+      melodyLength: 3,
+      numberOfPossibleAttempts: 3,
+      expected: 1,
+    },
+    {
+      description: `Returns the second index, when the second attempt isn't filled`,
+      attempts: [
+        [
+          { value: 'D1', hint: 2 },
+          { value: 'D1', hint: 2 },
+          { value: 'D#1', hint: 1 },
+        ],
+        [{ value: 'D1' }, { value: 'D1' }],
+        [],
       ],
-      [{ value: 'D1' }, { value: 'D1' }],
-      [],
-    ],
-    melodyLength: 3,
-    numberOfPossibleAttempts: 3,
-    expected: 1,
-  },
-  {
-    description: `Returns the second index, when the second attempt is filled but hasn't been recorded`,
-    attempts: [
-      [
-        { value: 'D1', hint: 2 },
-        { value: 'D1', hint: 2 },
-        { value: 'D#1', hint: 1 },
+      melodyLength: 3,
+      numberOfPossibleAttempts: 3,
+      expected: 1,
+    },
+    {
+      description: `Returns the second index, when the second attempt is filled but hasn't been recorded`,
+      attempts: [
+        [
+          { value: 'D1', hint: 2 },
+          { value: 'D1', hint: 2 },
+          { value: 'D#1', hint: 1 },
+        ],
+        [{ value: 'D1' }, { value: 'D1' }, { value: 'D#1' }],
+        [],
       ],
-      [{ value: 'D1' }, { value: 'D1' }, { value: 'D#1' }],
-      [],
-    ],
-    melodyLength: 3,
-    numberOfPossibleAttempts: 3,
-    expected: 1,
-  },
-  {
-    description: `Returns the third index, when the second attempt is filled and has been recorded`,
-    attempts: [
-      [
-        { value: 'D1', hint: 2 },
-        { value: 'D1', hint: 2 },
-        { value: 'D#1', hint: 1 },
+      melodyLength: 3,
+      numberOfPossibleAttempts: 3,
+      expected: 1,
+    },
+    {
+      description: `Returns the third index, when the second attempt is filled and has been recorded`,
+      attempts: [
+        [
+          { value: 'D1', hint: 2 },
+          { value: 'D1', hint: 2 },
+          { value: 'D#1', hint: 1 },
+        ],
+        [
+          { value: 'D1', hint: 2 },
+          { value: 'D1', hint: 2 },
+          { value: 'D#1', hint: 1 },
+        ],
+        [],
       ],
-      [
-        { value: 'D1', hint: 2 },
-        { value: 'D1', hint: 2 },
-        { value: 'D#1', hint: 1 },
+      melodyLength: 3,
+      numberOfPossibleAttempts: 3,
+      expected: 2,
+    },
+    {
+      description: `Returns the last index, when the last attempt is filled and has been recorded`,
+      attempts: [
+        [
+          { value: 'D1', hint: 2 },
+          { value: 'D1', hint: 2 },
+          { value: 'D#1', hint: 1 },
+        ],
+        [
+          { value: 'D1', hint: 2 },
+          { value: 'D1', hint: 2 },
+          { value: 'D#1', hint: 1 },
+        ],
+        [
+          { value: 'D1', hint: 2 },
+          { value: 'D1', hint: 2 },
+          { value: 'D#1', hint: 1 },
+        ],
       ],
-      [],
-    ],
-    melodyLength: 3,
-    numberOfPossibleAttempts: 3,
-    expected: 2,
-  },
-  {
-    description: `Returns the last index, when the last attempt is filled and has been recorded`,
-    attempts: [
-      [
-        { value: 'D1', hint: 2 },
-        { value: 'D1', hint: 2 },
-        { value: 'D#1', hint: 1 },
-      ],
-      [
-        { value: 'D1', hint: 2 },
-        { value: 'D1', hint: 2 },
-        { value: 'D#1', hint: 1 },
-      ],
-      [
-        { value: 'D1', hint: 2 },
-        { value: 'D1', hint: 2 },
-        { value: 'D#1', hint: 1 },
-      ],
-    ],
-    melodyLength: 3,
-    numberOfPossibleAttempts: 3,
-    expected: 2,
-  },
-]
+      melodyLength: 3,
+      numberOfPossibleAttempts: 3,
+      expected: 2,
+    },
+  ]
 
 type ValidateParams = {
   attempt: Attempt

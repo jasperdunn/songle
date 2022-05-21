@@ -65,14 +65,14 @@ export function Keyboard({
       })
 
       if (updatedAttempt.every((note) => note.hint === 2)) {
-        endGame('success')
+        endGame('won')
         return
       }
 
       if (currentAttemptIndex < attempts.length - 1) {
         setCurrentAttemptIndex((index) => index + 1)
       } else {
-        endGame('fail')
+        endGame('lost')
       }
     }
   }, [

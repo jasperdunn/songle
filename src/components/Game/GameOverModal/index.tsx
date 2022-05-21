@@ -26,7 +26,7 @@ type GameOverMessageProps = {
 function GameOverMessage({
   gameOverResult,
 }: GameOverMessageProps): JSX.Element {
-  if (gameOverResult === 'success') {
+  if (gameOverResult === 'won') {
     return (
       <>
         <h1>You made it!</h1>

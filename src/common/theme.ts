@@ -6,7 +6,7 @@ export const theme = {
     success: { background: '#f5ffe9', foreground: '#46bc16' },
     info: { background: '#e1f6ff', foreground: '#1978fe' },
     warning: { background: '#fffbe0', foreground: '#f79d13' },
-    danger: { background: '#ffeeec', foreground: '#fc333e' },
+    error: { background: '#ffeeec', foreground: '#fc333e' },
   },
   borderRadius: {
     small: '5px',

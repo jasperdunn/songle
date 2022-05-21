@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
-    "start": "vite",
+    "start": "tsc && vite",
     "test": "vitest",
     "test-ui": "vitest --ui",
     "build": "tsc && vite build",

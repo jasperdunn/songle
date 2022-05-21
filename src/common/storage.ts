@@ -1,8 +1,10 @@
-import { Attempt } from 'components/Game/types'
+import { Attempt, GameOverResult } from 'components/Game/types'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 type LocalStorage = {
   attempts: Attempt[]
   currentAttemptIndex: number
+  gameOverResult: GameOverResult | null
 }
 
 export function getLocalStorage<K extends keyof LocalStorage>(
@@ -21,4 +23,17 @@ export function setLocalStorage<K extends keyof LocalStorage>(
   value: LocalStorage[K]
 ): void {
   localStorage.setItem(key, JSON.stringify(value))
+}
+
+export function useLocalStorage<K extends keyof LocalStorage>(
+  key: K,
+  defaultValue: LocalStorage[K]
+): [LocalStorage[K], Dispatch<SetStateAction<LocalStorage[K]>>] {
+  const [value, setValue] = useState(() => getLocalStorage(key) || defaultValue)
+
+  useEffect(() => {
+    setLocalStorage(key, value)
+  }, [key, value])
+
+  return [value, setValue]
 }

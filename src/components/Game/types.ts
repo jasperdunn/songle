@@ -30,4 +30,4 @@ export type Note = {
 export type Attempt = Note[]
 export type Melody = NoteValue[]
 
-export type GameOverResult = 'success' | 'fail'
+export type GameOverResult = 'won' | 'lost'
