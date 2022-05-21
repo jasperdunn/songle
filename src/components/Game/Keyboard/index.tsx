@@ -12,6 +12,7 @@ import { FiCircle, FiPlay, FiSkipBack, FiSquare } from 'react-icons/fi'
 import { validate } from 'components/Game/utils'
 import { Button } from 'components/Button'
 import { Key, Octave } from 'components/Game/Keyboard/Octave'
+import { setLocalStorage } from 'common/storage'
 
 type KeyboardProps = {
   play: () => void
@@ -61,6 +62,7 @@ export function Keyboard({
 
         updatedAttempts[currentAttemptIndex] = updatedAttempt
 
+        setLocalStorage('attempts', updatedAttempts)
         return updatedAttempts
       })
 

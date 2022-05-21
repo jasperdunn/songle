@@ -4,9 +4,9 @@ import { GameOverModal } from 'components/Game/GameOverModal'
 import { useMidiPlayer } from 'hooks/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
 import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useLocalStorage } from 'common/storage'
+import { getLocalStorage, useLocalStorage } from 'common/storage'
 import { useCalculateCurrentAttemptIndex } from 'components/Game/utils'
 
 export function Game(): JSX.Element {
@@ -22,12 +22,9 @@ export function Game(): JSX.Element {
   }
 
   const numberOfPossibleAttempts = 6
-  const emptyAttempts: Attempt[] = useMemo(
-    () => Array(numberOfPossibleAttempts).fill([]),
-    [numberOfPossibleAttempts]
+  const [attempts, setAttempts] = useState<Attempt[]>(() =>
+    Array(numberOfPossibleAttempts).fill([])
   )
-
-  const [attempts, setAttempts] = useLocalStorage('attempts', emptyAttempts)
   const [gameOverResult, setGameOverResult] = useLocalStorage(
     'gameOverResult',
     null
@@ -42,7 +39,8 @@ export function Game(): JSX.Element {
   const { loading, play, stop, playing, notePlayed, melody } = useMidiPlayer(
     challenge.midiUrl,
     attempts,
-    currentAttemptIndex
+    currentAttemptIndex,
+    gameOverResult
   )
 
   useCalculateCurrentAttemptIndex(
@@ -51,6 +49,13 @@ export function Game(): JSX.Element {
     numberOfPossibleAttempts,
     setCurrentAttemptIndex
   )
+
+  useEffect(() => {
+    const storedAttempts = getLocalStorage('attempts')
+    if (storedAttempts) {
+      setAttempts(storedAttempts)
+    }
+  }, [])
 
   useEffect(() => {
     if (gameOverResult) {

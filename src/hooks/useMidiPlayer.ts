@@ -1,13 +1,19 @@
 import { Midi } from '@tonejs/midi'
 import { usePreviousValue } from 'hooks/usePreviousValue'
-import { Attempt, Melody, NoteValue } from 'components/Game/types'
+import {
+  Attempt,
+  GameOverResult,
+  Melody,
+  NoteValue,
+} from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MonoSynth, now, Part, start, Transport } from 'tone'
 
 export function useMidiPlayer(
   srcUrl: string,
   attempts: Attempt[],
-  currentAttemptIndex: number
+  currentAttemptIndex: number,
+  gameOverResult: GameOverResult | null
 ): {
   play: () => void
   stop: () => void
@@ -22,7 +28,7 @@ export function useMidiPlayer(
   const midiRef = useRef<Midi>()
   const synthRef = useRef<MonoSynth>()
   const partRef = useRef<Part>()
-  const prevAttemptIndex = usePreviousValue(currentAttemptIndex)
+  const previousAttemptIndex = usePreviousValue(currentAttemptIndex)
   const [melody, setMelody] = useState<Melody>([])
 
   const loadMidi = useCallback(async () => {
@@ -88,8 +94,12 @@ export function useMidiPlayer(
       return
     }
 
-    if (prevAttemptIndex !== currentAttemptIndex) {
+    if (previousAttemptIndex !== currentAttemptIndex || gameOverResult) {
       partRef.current.clear()
+
+      const attemptIndexToPlay = gameOverResult
+        ? currentAttemptIndex
+        : currentAttemptIndex - 1
 
       partRef.current = new Part(
         (time, note) => {
@@ -104,14 +114,14 @@ export function useMidiPlayer(
         },
         midiRef.current.tracks[0].notes.map((note, index) => ({
           time: note.time,
-          name: attempts[currentAttemptIndex - 1][index].value,
+          name: attempts[attemptIndexToPlay][index].value,
           velocity: note.velocity,
           duration: note.duration,
           index,
         }))
       ).start(0)
     }
-  }, [attempts, currentAttemptIndex, prevAttemptIndex])
+  }, [attempts, currentAttemptIndex, gameOverResult, previousAttemptIndex])
 
   // setInterval(() => {
   //   console.log({
@@ -164,12 +174,6 @@ export function useMidiPlayer(
   }
 
   async function play(): Promise<void> {
-    /**
-     * Most browsers will not play any audio until
-     * a user clicks something (like a play button).
-     * Invoke this method on a click or keypress event
-     * handler to start the audio context.
-     */
     await start()
     Transport.start()
     setPlaying(true)

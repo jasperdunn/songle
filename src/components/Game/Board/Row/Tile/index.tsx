@@ -6,11 +6,11 @@ import styled, { css } from 'styled-components'
 type TileProps = {
   children?: ReactNode
   hint?: NoteHint
-  played?: boolean
+  playing?: boolean
 }
-export function Tile({ children, hint, played }: TileProps): JSX.Element {
+export function Tile({ children, hint, playing }: TileProps): JSX.Element {
   return (
-    <Square $hint={hint} played={played}>
+    <Square $hint={hint} playing={playing}>
       {children}
     </Square>
   )
@@ -18,7 +18,7 @@ export function Tile({ children, hint, played }: TileProps): JSX.Element {
 
 type SquareProps = {
   $hint: TileProps['hint']
-  played: TileProps['played']
+  playing: TileProps['playing']
 }
 const Square = styled.div<SquareProps>`
   border: 2px solid gray;
@@ -40,8 +40,8 @@ const Square = styled.div<SquareProps>`
     font-size: 24px;
   }
 
-  ${({ played }) =>
-    played &&
+  ${({ playing }) =>
+    playing &&
     css`
       border-style: dashed;
     `}
