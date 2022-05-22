@@ -95,11 +95,11 @@ export function Game(): JSX.Element {
       }}
     >
       <Container>
-        {process.env.NODE_ENV === 'development' && (
-          <button onClick={resetGame} type="button">
-            RESET GAME
-          </button>
-        )}
+        {/* {process.env.NODE_ENV === 'development' && ( */}
+        <button onClick={resetGame} type="button">
+          RESET GAME
+        </button>
+        {/* )} */}
         <Board />
         <Keyboard play={play} stop={stop} loading={loading} playing={playing} />
         <GameOverModal onHide={() => setModalIsOpen(false)} />
