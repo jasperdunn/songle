@@ -39,15 +39,17 @@ export function Keyboard({
   const gameIsOver = gameOverResult !== null
   const currentAttempt = attempts[currentAttemptIndex]
 
-  const reset = useCallback(() => {
+  const removeLastNote = useCallback(() => {
     if (currentAttempt.length === 0) {
       return
     }
 
     setAttempts((state) => {
       const updatedAttempts = [...state]
+      const updatedAttempt = [...currentAttempt]
+      updatedAttempt.pop()
 
-      updatedAttempts[currentAttemptIndex] = []
+      updatedAttempts[currentAttemptIndex] = updatedAttempt
 
       return updatedAttempts
     })
@@ -145,9 +147,9 @@ export function Keyboard({
           <>
             <Button
               id="keyBackspace"
-              onClick={reset}
+              onClick={removeLastNote}
               type="button"
-              title="reset"
+              title="backspace"
               disabled={gameIsOver}
             >
               <FiSkipBack size={48} color="black" />
