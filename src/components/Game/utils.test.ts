@@ -1,8 +1,13 @@
-import { calculateCurrentAttemptIndex, validate } from 'components/Game/utils'
+import {
+  calculateCurrentAttemptIndex,
+  getListenableAttemptIndex,
+  validate,
+} from 'components/Game/utils'
 import { test, expect } from 'vitest'
 import {
   validateData,
   calculateCurrentAttemptIndexData,
+  getListenableAttemptIndexData,
 } from './utils.test-data'
 
 test.each(validateData)(
@@ -21,6 +26,14 @@ test.each(calculateCurrentAttemptIndexData)(
       melodyLength,
       numberOfPossibleAttempts
     )
+    expect(actual).toStrictEqual(expected)
+  }
+)
+
+test.each(getListenableAttemptIndexData)(
+  'getListenableAttemptIndex - %# - %j',
+  ({ currentAttemptIndex, attempts, expected }) => {
+    const actual = getListenableAttemptIndex(currentAttemptIndex, attempts)
     expect(actual).toStrictEqual(expected)
   }
 )

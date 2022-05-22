@@ -7,22 +7,26 @@ import styled, { css } from 'styled-components'
 
 type RowProps = {
   attempt: Attempt
-  playable: boolean
+  listenable: boolean
 }
-export function Row({ attempt, playable }: RowProps): JSX.Element {
-  const { melody, notePlayed } = useContext(GameContext)
+export function Row({ attempt, listenable }: RowProps): JSX.Element {
+  const { melody, notePlaying } = useContext(GameContext)
   const availableTiles = Array.from(Array(melody.length).keys())
 
   return (
     <Grid melodyLength={melody.length}>
       {availableTiles.map((n) => {
         if (!attempt[n]) {
-          return <Tile key={n} playing={playable && notePlayed === n}></Tile>
+          return <Tile key={n} playing={listenable && notePlaying === n}></Tile>
         }
 
         const note = attempt[n]
         return (
-          <Tile key={n} hint={note.hint} playing={playable && notePlayed === n}>
+          <Tile
+            key={n}
+            hint={note.hint}
+            playing={listenable && notePlaying === n}
+          >
             {note.value}
           </Tile>
         )

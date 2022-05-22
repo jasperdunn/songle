@@ -1,17 +1,17 @@
 import { NoteValue } from 'components/Game/types'
 import styled, { css } from 'styled-components'
-import { Octave as OctaveType } from 'components/Game/types'
+import { Octave } from 'components/Game/types'
 
-type OctaveProps = {
-  octave: OctaveType
+type OctaveGroupProps = {
+  octave: Octave
   addNote: (note: NoteValue) => void
   disabled: boolean
 }
-export function Octave({
+export function OctaveGroup({
   octave,
   addNote,
   disabled,
-}: OctaveProps): JSX.Element {
+}: OctaveGroupProps): JSX.Element {
   return (
     <>
       <WhiteKey

@@ -5,26 +5,18 @@ import { useContext } from 'react'
 import styled, { css } from 'styled-components'
 
 export function Board(): JSX.Element {
-  const { attempts, currentAttemptIndex, gameOverResult } =
-    useContext(GameContext)
+  const { attempts, listenableAttemptIndex } = useContext(GameContext)
 
   return (
     <GridContainer>
       <Grid numberOfPossibleAttempts={attempts.length}>
         {attempts.map((attempt, index) => {
-          const firstRowAndFirstAttemptNotFilled =
-            index === 0 && currentAttemptIndex === 0
-
-          const previousRow = gameOverResult
-            ? currentAttemptIndex === index
-            : currentAttemptIndex - 1 === index
-
           if (attempt) {
             return (
               <Row
                 key={index}
                 attempt={attempt}
-                playable={firstRowAndFirstAttemptNotFilled || previousRow}
+                listenable={index === listenableAttemptIndex}
               />
             )
           }

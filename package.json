@@ -6,8 +6,8 @@
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
     "start": "tsc && vite",
-    "test": "vitest",
-    "test-ui": "vitest --ui",
+    "test": "tsc && vitest",
+    "test-ui": "tsc && vitest --ui",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "devtools": "pnpm exec scripts/devtools-html-mod.sh && pnpm dlx react-devtools",

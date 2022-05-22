@@ -7,7 +7,10 @@ import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { getLocalStorage, useLocalStorage } from 'common/storage'
-import { useCalculateCurrentAttemptIndex } from 'components/Game/utils'
+import {
+  getListenableAttemptIndex,
+  useCalculateCurrentAttemptIndex,
+} from 'components/Game/utils'
 
 export function Game(): JSX.Element {
   const challenge: Challenge = {
@@ -36,12 +39,14 @@ export function Game(): JSX.Element {
 
   const [modalIsOpen, setModalIsOpen] = useState(false)
 
-  const { loading, play, stop, playing, notePlayed, melody } = useMidiPlayer(
-    challenge.midiUrl,
-    attempts,
+  const listenableAttemptIndex = getListenableAttemptIndex(
     currentAttemptIndex,
-    gameOverResult
+    attempts
   )
+  const listenableAttempt = attempts[listenableAttemptIndex]
+
+  const { loading, play, stop, playing, notePlaying, melody, playNote } =
+    useMidiPlayer(challenge.midiUrl, listenableAttempt)
 
   useCalculateCurrentAttemptIndex(
     melody.length,
@@ -75,6 +80,7 @@ export function Game(): JSX.Element {
   return (
     <GameContext.Provider
       value={{
+        listenableAttemptIndex,
         currentAttemptIndex,
         setCurrentAttemptIndex,
         attempts,
@@ -84,7 +90,8 @@ export function Game(): JSX.Element {
         gameOverResult,
         modalIsOpen,
         challenge,
-        notePlayed,
+        notePlaying,
+        playNote,
       }}
     >
       <Container>

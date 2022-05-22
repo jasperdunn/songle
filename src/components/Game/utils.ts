@@ -67,3 +67,24 @@ export function useCalculateCurrentAttemptIndex(
     updateCurrentAttemptIndex()
   }, [updateCurrentAttemptIndex])
 }
+
+export function getListenableAttemptIndex(
+  currentAttemptIndex: number,
+  attempts: Attempt[]
+): number {
+  if (currentAttemptIndex === 0) {
+    return 0
+  }
+
+  const currentAttempt = attempts[currentAttemptIndex]
+
+  if (
+    currentAttempt.length === attempts[currentAttemptIndex - 1].length &&
+    currentAttemptIndex === attempts.length - 1 &&
+    currentAttempt.every((n) => !!n.hint || n.hint === 0)
+  ) {
+    return currentAttemptIndex
+  }
+
+  return currentAttemptIndex - 1
+}

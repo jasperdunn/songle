@@ -1,34 +1,28 @@
 import { Midi } from '@tonejs/midi'
 import { usePreviousValue } from 'hooks/usePreviousValue'
-import {
-  Attempt,
-  GameOverResult,
-  Melody,
-  NoteValue,
-} from 'components/Game/types'
+import { Melody, Note, NoteValue } from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MonoSynth, now, Part, start, Transport } from 'tone'
 
 export function useMidiPlayer(
   srcUrl: string,
-  attempts: Attempt[],
-  currentAttemptIndex: number,
-  gameOverResult: GameOverResult | null
+  notes: Note[] = []
 ): {
   play: () => void
   stop: () => void
   loading: boolean
   playing: boolean
-  notePlayed: number | null
+  notePlaying: number | null
   melody: Melody
+  playNote: (note: NoteValue) => void
 } {
   const [loading, setLoading] = useState(true)
   const [playing, setPlaying] = useState(false)
-  const [notePlayed, setNotePlayed] = useState<number | null>(null)
+  const [notePlaying, setNotePlaying] = useState<number | null>(null)
   const midiRef = useRef<Midi>()
   const synthRef = useRef<MonoSynth>()
   const partRef = useRef<Part>()
-  const previousAttemptIndex = usePreviousValue(currentAttemptIndex)
+  const previousNotes = usePreviousValue(notes)
   const [melody, setMelody] = useState<Melody>([])
 
   const loadMidi = useCallback(async () => {
@@ -58,7 +52,7 @@ export function useMidiPlayer(
             note.velocity
           )
 
-          setNotePlayed(note.index)
+          setNotePlaying(note.index)
         },
         midiRef.current.tracks[0].notes.map((note, index) => {
           return {
@@ -90,38 +84,36 @@ export function useMidiPlayer(
   }, [loadMidi])
 
   useEffect(() => {
-    if (!midiRef.current || !partRef.current) {
+    if (
+      !midiRef.current ||
+      !partRef.current ||
+      notes.length !== midiRef.current.tracks[0].notes.length
+    ) {
       return
     }
 
-    if (previousAttemptIndex !== currentAttemptIndex || gameOverResult) {
-      partRef.current.clear()
+    partRef.current.clear()
 
-      const attemptIndexToPlay = gameOverResult
-        ? currentAttemptIndex
-        : currentAttemptIndex - 1
+    partRef.current = new Part(
+      (time, note) => {
+        synthRef.current?.triggerAttackRelease(
+          note.name,
+          note.duration,
+          time,
+          note.velocity
+        )
 
-      partRef.current = new Part(
-        (time, note) => {
-          synthRef.current?.triggerAttackRelease(
-            note.name,
-            note.duration,
-            time,
-            note.velocity
-          )
-
-          setNotePlayed(note.index)
-        },
-        midiRef.current.tracks[0].notes.map((note, index) => ({
-          time: note.time,
-          name: attempts[attemptIndexToPlay][index].value,
-          velocity: note.velocity,
-          duration: note.duration,
-          index,
-        }))
-      ).start(0)
-    }
-  }, [attempts, currentAttemptIndex, gameOverResult, previousAttemptIndex])
+        setNotePlaying(note.index)
+      },
+      midiRef.current.tracks[0].notes.map((note, index) => ({
+        time: note.time,
+        name: notes[index].value,
+        velocity: note.velocity,
+        duration: note.duration,
+        index,
+      }))
+    ).start(0)
+  }, [notes, previousNotes])
 
   // setInterval(() => {
   //   console.log({
@@ -180,10 +172,15 @@ export function useMidiPlayer(
   }
 
   function stop(): void {
-    setNotePlayed(null)
+    setNotePlaying(null)
     Transport.stop()
     setPlaying(false)
   }
 
-  return { play, stop, loading, playing, notePlayed, melody }
+  function playNote(note: NoteValue): void {
+    // make the duration be as long as the user holds down the key
+    synthRef.current?.triggerAttackRelease(note, 0.5)
+  }
+
+  return { play, stop, loading, playing, notePlaying, melody, playNote }
 }

@@ -3,10 +3,12 @@ import {
   GameOverResult,
   Attempt,
   Melody,
+  NoteValue,
 } from 'components/Game/types'
 import { createContext } from 'react'
 
 type GameContextType = {
+  listenableAttemptIndex: number
   currentAttemptIndex: number
   setCurrentAttemptIndex: React.Dispatch<React.SetStateAction<number>>
   attempts: Attempt[]
@@ -16,6 +18,7 @@ type GameContextType = {
   gameOverResult: GameOverResult | null
   modalIsOpen: boolean
   challenge: Challenge
-  notePlayed: number | null
+  notePlaying: number | null
+  playNote: (note: NoteValue) => void
 }
 export const GameContext = createContext({} as GameContextType)

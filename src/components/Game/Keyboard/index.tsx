@@ -5,14 +5,14 @@ import {
   keyUp,
   clickButton,
 } from 'components/Game/Keyboard/utils'
-import { NoteValue } from 'components/Game/types'
 import { useContext, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import { FiCircle, FiPlay, FiSkipBack, FiSquare } from 'react-icons/fi'
 import { validate } from 'components/Game/utils'
 import { Button } from 'components/Button'
-import { Key, Octave } from 'components/Game/Keyboard/Octave'
+import { Key } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
 import { setLocalStorage } from 'common/storage'
+import { OctaveList } from 'components/Game/Keyboard/OctaveList'
 
 type KeyboardProps = {
   play: () => void
@@ -125,20 +125,6 @@ export function Keyboard({
     }
   }, [currentAttempt.length])
 
-  function addNote(note: NoteValue): void {
-    if (currentAttempt.length < melody.length) {
-      setAttempts((state) => {
-        const updatedAttempts = [...state]
-        const updatedAttempt = [...currentAttempt]
-        updatedAttempt.push({ value: note })
-
-        updatedAttempts[currentAttemptIndex] = updatedAttempt
-
-        return updatedAttempts
-      })
-    }
-  }
-
   return (
     <>
       <Buttons>
@@ -151,7 +137,7 @@ export function Keyboard({
               onClick={removeLastNote}
               type="button"
               title="backspace"
-              disabled={gameIsOver}
+              disabled={gameIsOver || playing}
             >
               <FiSkipBack size={48} color="black" />
             </Button>
@@ -178,15 +164,7 @@ export function Keyboard({
       </Buttons>
       <Container>
         <Keys>
-          <Octave octave={0} addNote={addNote} disabled={gameIsOver} />
-          <Octave octave={1} addNote={addNote} disabled={gameIsOver} />
-          <Octave octave={2} addNote={addNote} disabled={gameIsOver} />
-          <Octave octave={3} addNote={addNote} disabled={gameIsOver} />
-          <Octave octave={4} addNote={addNote} disabled={gameIsOver} />
-          <Octave octave={5} addNote={addNote} disabled={gameIsOver} />
-          <Octave octave={6} addNote={addNote} disabled={gameIsOver} />
-          <Octave octave={7} addNote={addNote} disabled={gameIsOver} />
-          <Octave octave={8} addNote={addNote} disabled={gameIsOver} />
+          <OctaveList />
         </Keys>
       </Container>
     </>
@@ -196,8 +174,9 @@ export function Keyboard({
 const Container = styled.div`
   display: flex;
   width: 100vw;
-  overflow-x: scroll;
+  overflow-x: auto;
   padding: 0 16px;
+  justify-content: center;
 `
 
 const Buttons = styled.div`
@@ -217,7 +196,7 @@ const Keys = styled.div`
 
   position: relative;
   user-select: none;
-  height: 200px;
+  height: 204px;
   display: flex;
   justify-content: center;
 
@@ -228,4 +207,7 @@ const Keys = styled.div`
   ${Key}:last-child {
     border-radius: 0 5px 5px 5px;
   }
+
+  border-bottom: 4px solid black;
+  border-radius: 5px;
 `
