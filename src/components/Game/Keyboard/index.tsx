@@ -91,12 +91,13 @@ export function Keyboard({
 
   useEffect(() => {
     function keyDown(this: Document, event: KeyboardEvent): void {
-      if (
-        (event.key === 'Backspace' ||
-          event.key === 'Enter' ||
-          event.key === ' ') &&
-        !event.repeat
-      ) {
+      if (event.key === 'Backspace') {
+        event.preventDefault()
+        clickButton(event.key as ComputerKey)
+        return
+      }
+
+      if ((event.key === 'Enter' || event.key === ' ') && !event.repeat) {
         event.preventDefault()
         clickButton(event.key as ComputerKey)
         return
