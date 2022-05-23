@@ -194,6 +194,31 @@ export const validateData: ValidateParams[] = [
       { value: 'D1', hint: 2 },
     ],
   },
+  {
+    attempt: [
+      { value: 'D1' },
+      { value: 'C1' },
+      { value: 'G1' },
+      { value: 'F1' },
+      { value: 'C1' },
+      { value: 'G1' },
+      { value: 'F1' },
+      { value: 'C1' },
+      { value: 'F1' },
+    ],
+    melody: ['D1', 'D2', 'G1', 'F2', 'D1', 'G2', 'F1', 'C2', 'D1'],
+    expected: [
+      { value: 'D1', hint: 2 },
+      { value: 'C1', hint: 0 },
+      { value: 'G1', hint: 2 },
+      { value: 'F1', hint: 2 },
+      { value: 'C1', hint: 0 },
+      { value: 'G1', hint: 2 },
+      { value: 'F1', hint: 2 },
+      { value: 'C1', hint: 2 },
+      { value: 'F1', hint: 0 },
+    ],
+  },
 ]
 
 type GetListenableAttemptIndexDataParams = {
