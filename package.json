@@ -4,15 +4,16 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "preinstall": "npx -y only-allow pnpm",
-    "start": "tsc && vite",
-    "test": "tsc && vitest",
-    "test-ui": "tsc && vitest --ui",
-    "build": "tsc && vite build",
+    "start": "vite",
+    "test": "vitest",
+    "test-ui": "vitest --ui",
+    "build": "vite build",
     "preview": "vite preview",
     "devtools": "pnpm exec scripts/devtools-html-mod.sh && pnpm dlx react-devtools",
     "depcheck": "pnpm dlx depcheck",
-    "update-browserslist": "pnpm dlx browserslist@latest --update-db"
+    "update-browserslist": "pnpm dlx browserslist@latest --update-db",
+    "preinstall": "npx -y only-allow pnpm",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@babel/core": "^7.17.9",
@@ -31,7 +32,10 @@
     "eslint": "^8.13.0",
     "eslint-config-react-app": "^7.0.1",
     "framer-motion": "^6.2.10",
+    "husky": "^8.0.1",
     "jsdom": "^19.0.0",
+    "lint-staged": "^12.4.2",
+    "prettier": "^2.6.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
