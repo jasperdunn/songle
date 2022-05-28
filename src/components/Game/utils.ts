@@ -6,10 +6,10 @@ export function validate(attempt: Attempt, melody: Melody): Attempt {
   const validatedAttempt: Attempt = []
 
   // first pass
-  for (let index = 0; index < attempt.length; index++) {
-    const currentNote = attempt[index]
+  for (let i = 0; i < attempt.length; i++) {
+    const currentNote = attempt[i]
 
-    if (currentNote.value === melody[index]) {
+    if (currentNote.value === melody[i]) {
       currentNote.hint = 2
     } else if (melody.includes(currentNote.value)) {
       currentNote.hint = 1
@@ -22,15 +22,16 @@ export function validate(attempt: Attempt, melody: Melody): Attempt {
 
   // second pass - set 1 to a 0
   // when the attempted notes in the melody with a hint of 2 are equal to the number of times that note appears in the melody
-  for (let index = 0; index < validatedAttempt.length; index++) {
-    const currentNote = validatedAttempt[index]
+  for (let i = 0; i < validatedAttempt.length; i++) {
+    const currentNote = validatedAttempt[i]
 
     if (currentNote.hint !== 1) {
       continue
     }
 
     const totalCorrectDuplicatesInAttempt = validatedAttempt.filter(
-      (n, i) => i !== index && n.value === currentNote.value && n.hint === 2
+      (note, index) =>
+        index !== i && note.value === currentNote.value && note.hint === 2
     ).length
 
     if (totalCorrectDuplicatesInAttempt === 0) {
@@ -38,11 +39,11 @@ export function validate(attempt: Attempt, melody: Melody): Attempt {
     }
 
     const totalDuplicatesInMelody = melody.filter(
-      (n) => n === currentNote.value
+      (noteValue) => noteValue === currentNote.value
     ).length
 
     if (totalCorrectDuplicatesInAttempt === totalDuplicatesInMelody) {
-      validatedAttempt[index].hint = 0
+      validatedAttempt[i].hint = 0
     }
   }
 
