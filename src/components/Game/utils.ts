@@ -3,25 +3,50 @@ import { findLastIndex } from 'common/utils'
 import { Attempt, Melody } from 'components/Game/types'
 
 export function validate(attempt: Attempt, melody: Melody): Attempt {
-  const validatedNotes: Attempt = []
+  const validatedAttempt: Attempt = []
 
-  for (let i = 0; i < attempt.length; i++) {
-    const note = attempt[i]
+  // first pass
+  for (let index = 0; index < attempt.length; index++) {
+    const currentNote = attempt[index]
 
-    if (melody.includes(note.value)) {
-      if (note.value === melody[i]) {
-        note.hint = 2
-      } else {
-        note.hint = 1
-      }
+    if (currentNote.value === melody[index]) {
+      currentNote.hint = 2
+    } else if (melody.includes(currentNote.value)) {
+      currentNote.hint = 1
     } else {
-      note.hint = 0
+      currentNote.hint = 0
     }
 
-    validatedNotes.push(note)
+    validatedAttempt.push(currentNote)
   }
 
-  return validatedNotes
+  // second pass - set 1 to a 0
+  // when the attempted notes in the melody with a hint of 2 are equal to the number of times that note appears in the melody
+  for (let index = 0; index < validatedAttempt.length; index++) {
+    const currentNote = validatedAttempt[index]
+
+    if (currentNote.hint !== 1) {
+      continue
+    }
+
+    const totalCorrectDuplicatesInAttempt = validatedAttempt.filter(
+      (n, i) => i !== index && n.value === currentNote.value && n.hint === 2
+    ).length
+
+    if (totalCorrectDuplicatesInAttempt === 0) {
+      continue
+    }
+
+    const totalDuplicatesInMelody = melody.filter(
+      (n) => n === currentNote.value
+    ).length
+
+    if (totalCorrectDuplicatesInAttempt === totalDuplicatesInMelody) {
+      validatedAttempt[index].hint = 0
+    }
+  }
+
+  return validatedAttempt
 }
 
 export function calculateCurrentAttemptIndex(
