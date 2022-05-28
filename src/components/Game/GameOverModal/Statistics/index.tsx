@@ -7,7 +7,7 @@ export function Statistics(): JSX.Element {
   return (
     <>
       <h2>Statistics</h2>
-      Completed attempt: {listenableAttemptIndex} / {attempts.length}
+      Completed attempt: {listenableAttemptIndex + 1} / {attempts.length}
     </>
   )
 }
