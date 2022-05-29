@@ -17,15 +17,9 @@ import { OctaveList } from 'components/Game/Keyboard/OctaveList'
 type KeyboardProps = {
   play: () => void
   stop: () => void
-  loading: boolean
   playing: boolean
 }
-export function Keyboard({
-  play,
-  stop,
-  loading,
-  playing,
-}: KeyboardProps): JSX.Element {
+export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
   const {
     currentAttemptIndex,
     setCurrentAttemptIndex,
@@ -128,39 +122,33 @@ export function Keyboard({
   return (
     <>
       <Buttons>
-        {loading ? (
-          <>...loading</>
+        <Button
+          id="keyBackspace"
+          onClick={removeLastNote}
+          type="button"
+          title="backspace"
+          disabled={gameIsOver || playing}
+        >
+          <FiSkipBack size={48} color="black" />
+        </Button>
+        {playing ? (
+          <Button id="keySpace" onClick={stop} type="button" title="stop">
+            <FiSquare size={48} color="black" />
+          </Button>
         ) : (
-          <>
-            <Button
-              id="keyBackspace"
-              onClick={removeLastNote}
-              type="button"
-              title="backspace"
-              disabled={gameIsOver || playing}
-            >
-              <FiSkipBack size={48} color="black" />
-            </Button>
-            {playing ? (
-              <Button id="keySpace" onClick={stop} type="button" title="stop">
-                <FiSquare size={48} color="black" />
-              </Button>
-            ) : (
-              <Button id="keySpace" onClick={play} type="button" title="play">
-                <FiPlay size={48} color="black" />
-              </Button>
-            )}
-            <Button
-              id="keyEnter"
-              onClick={attemptChallenge}
-              type="submit"
-              title="record"
-              disabled={gameIsOver}
-            >
-              <FiCircle size={48} color="black" />
-            </Button>
-          </>
+          <Button id="keySpace" onClick={play} type="button" title="play">
+            <FiPlay size={48} color="black" />
+          </Button>
         )}
+        <Button
+          id="keyEnter"
+          onClick={attemptChallenge}
+          type="submit"
+          title="record"
+          disabled={gameIsOver}
+        >
+          <FiCircle size={48} color="black" />
+        </Button>
       </Buttons>
       <Container>
         <Keys>

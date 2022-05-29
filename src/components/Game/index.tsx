@@ -3,27 +3,18 @@ import { GameContext } from 'components/Game/context'
 import { GameOverModal } from 'components/Game/GameOverModal'
 import { useMidiPlayer } from 'hooks/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
-import { Attempt, Challenge, GameOverResult } from 'components/Game/types'
+import { Attempt, GameOverResult } from 'components/Game/types'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { getLocalStorage, useLocalStorage } from 'common/storage'
 import {
   getListenableAttemptIndex,
+  getUrl,
   useCalculateCurrentAttemptIndex,
+  useLoadChallenge,
 } from 'components/Game/utils'
 
 export function Game(): JSX.Element {
-  const challenge: Challenge = {
-    artist: 'Mark Ronson',
-    title: 'Uptown Funk (feat. Bruno Mars)',
-    spotifyUrl:
-      'https://open.spotify.com/embed/track/32OlwWuMpZ6b0aN2RZOeMS?utm_source=generator',
-    youtubeUrl: 'https://www.youtube.com/embed/OPf0YbXqDm0',
-    appleMusicUrl:
-      'https://embed.music.apple.com/au/album/uptown-funk-feat-bruno-mars/943946661?i=943946671',
-    midiUrl: 'https://songle.blob.core.windows.net/midi/uptown-funk.mid',
-  }
-
   const numberOfPossibleAttempts = 6
   const [attempts, setAttempts] = useState<Attempt[]>(() =>
     Array(numberOfPossibleAttempts).fill([])
@@ -44,9 +35,17 @@ export function Game(): JSX.Element {
     attempts
   )
   const listenableAttempt = attempts[listenableAttemptIndex]
+  const {
+    loading: loadingMidi,
+    play,
+    stop,
+    playing,
+    notePlaying,
+    melody,
+    playNote,
+  } = useMidiPlayer(getUrl('midi'), listenableAttempt)
 
-  const { loading, play, stop, playing, notePlaying, melody, playNote } =
-    useMidiPlayer(challenge.midiUrl, listenableAttempt)
+  const { challenge, loadingChallenge } = useLoadChallenge()
 
   useCalculateCurrentAttemptIndex(
     melody.length,
@@ -88,21 +87,30 @@ export function Game(): JSX.Element {
         melody,
         endGame,
         gameOverResult,
-        modalIsOpen,
-        challenge,
         notePlaying,
         playNote,
       }}
     >
       <Container>
-        {/* {process.env.NODE_ENV === 'development' && ( */}
-        <button onClick={resetGame} type="button">
-          RESET GAME
-        </button>
-        {/* )} */}
-        <Board />
-        <Keyboard play={play} stop={stop} loading={loading} playing={playing} />
-        <GameOverModal onHide={() => setModalIsOpen(false)} />
+        {loadingMidi || loadingChallenge ? (
+          'loading...'
+        ) : (
+          <>
+            {/* {process.env.NODE_ENV === 'development' && ( */}
+            <button onClick={resetGame} type="button">
+              RESET GAME
+            </button>
+            {/* )} */}
+            <Board />
+            <Keyboard play={play} stop={stop} playing={playing} />
+            <GameOverModal
+              challenge={challenge}
+              onHide={() => setModalIsOpen(false)}
+              isOpen={modalIsOpen}
+              gameOverResult={gameOverResult}
+            />
+          </>
+        )}
       </Container>
     </GameContext.Provider>
   )

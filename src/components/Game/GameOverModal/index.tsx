@@ -1,21 +1,26 @@
-import { GameContext } from 'components/Game/context'
 import { Statistics } from 'components/Game/GameOverModal/Statistics'
 import { TrackDetails } from 'components/Game/GameOverModal/TrackDetails'
 import { GameOverResult } from 'components/Game/types'
 import { Modal } from 'components/Modal'
-import { useContext } from 'react'
+import { Challenge } from 'components/Game/types'
 
 type GameOverModalProps = {
   onHide: () => void
+  challenge: Challenge | null
+  isOpen: boolean
+  gameOverResult: GameOverResult | null
 }
-export function GameOverModal({ onHide }: GameOverModalProps): JSX.Element {
-  const { modalIsOpen, gameOverResult } = useContext(GameContext)
-
+export function GameOverModal({
+  onHide,
+  challenge,
+  isOpen,
+  gameOverResult,
+}: GameOverModalProps): JSX.Element {
   return (
-    <Modal isOpen={modalIsOpen} onHide={onHide}>
+    <Modal isOpen={isOpen} onHide={onHide}>
       {gameOverResult && <GameOverMessage gameOverResult={gameOverResult} />}
       <Statistics />
-      <TrackDetails />
+      {challenge && <TrackDetails challenge={challenge} />}
     </Modal>
   )
 }

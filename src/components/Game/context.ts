@@ -1,5 +1,4 @@
 import {
-  Challenge,
   GameOverResult,
   Attempt,
   Melody,
@@ -16,8 +15,6 @@ type GameContextType = {
   melody: Melody
   endGame: (result: GameOverResult) => void
   gameOverResult: GameOverResult | null
-  modalIsOpen: boolean
-  challenge: Challenge
   notePlaying: number | null
   playNote: (note: NoteValue) => void
 }

@@ -10,7 +10,6 @@ export type Challenge = {
   spotifyUrl: string
   youtubeUrl: string
   appleMusicUrl: string
-  midiUrl: string
 }
 
 /** Used for validating (coloring) the attempts. */

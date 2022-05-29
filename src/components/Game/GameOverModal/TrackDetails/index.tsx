@@ -1,10 +1,10 @@
-import { GameContext } from 'components/Game/context'
-import { useContext } from 'react'
 import styled from 'styled-components'
+import { Challenge } from 'components/Game/types'
 
-export function TrackDetails(): JSX.Element {
-  const { challenge } = useContext(GameContext)
-
+type TrackDetailsProps = {
+  challenge: Challenge
+}
+export function TrackDetails({ challenge }: TrackDetailsProps): JSX.Element {
   return (
     <div
       style={{

@@ -1,6 +1,13 @@
-import { Dispatch, SetStateAction, useCallback, useEffect } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import { findLastIndex } from 'common/utils'
-import { Attempt, Melody } from 'components/Game/types'
+import { Attempt, Challenge, Melody } from 'components/Game/types'
+import axios from 'axios'
 
 export function validate(attempt: Attempt, melody: Melody): Attempt {
   const validatedAttempt: Attempt = []
@@ -113,4 +120,38 @@ export function getListenableAttemptIndex(
   }
 
   return currentAttemptIndex - 1
+}
+
+export function getUrl(type: 'midi' | 'json'): string {
+  const gameDateString = new Date().toISOString().split('T')[0]
+  const timezoneOffset = (new Date().getTimezoneOffset() / 60) * -1
+
+  return `https://songle-wrangler.jasperdunn.workers.dev/${gameDateString}_${
+    type === 'midi' ? 0 : 1
+  }?timezoneOffset=${timezoneOffset}`
+}
+
+export function useLoadChallenge(): {
+  challenge: Challenge | null
+  loadingChallenge: boolean
+} {
+  const [loadingChallenge, setLoadingChallenge] = useState(true)
+  const [challenge, setChallenge] = useState<Challenge | null>(null)
+
+  const loadChallenge = useCallback(async () => {
+    try {
+      const response = await axios.get<Challenge>(getUrl('json'))
+      setChallenge(response.data)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoadingChallenge(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadChallenge()
+  }, [loadChallenge])
+
+  return { challenge, loadingChallenge }
 }
