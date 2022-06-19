@@ -9,13 +9,26 @@ import styled from 'styled-components'
 import { getLocalStorage, useLocalStorage } from 'common/storage'
 import {
   getListenableAttemptIndex,
-  getUrl,
+  getChallengeUrl,
   useCalculateCurrentAttemptIndex,
   useLoadChallenge,
+  getLocalDateString,
 } from 'components/Game/utils'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export function Game(): JSX.Element {
   const numberOfPossibleAttempts = 6
+  const { pathname } = useLocation()
+  const gameDateString = pathname.split('/')[1]
+  const navigate = useNavigate()
+
+  if (
+    /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(gameDateString) ===
+    false
+  ) {
+    navigate(`/${getLocalDateString(new Date())}`, { replace: true })
+  }
+
   const [attempts, setAttempts] = useState<Attempt[]>(() =>
     Array(numberOfPossibleAttempts).fill([])
   )
@@ -43,9 +56,11 @@ export function Game(): JSX.Element {
     notePlaying,
     melody,
     playNote,
-  } = useMidiPlayer(getUrl('midi'), listenableAttempt)
+  } = useMidiPlayer(getChallengeUrl('midi', gameDateString), listenableAttempt)
 
-  const { challenge, loadingChallenge } = useLoadChallenge()
+  const { challenge, loadingChallenge } = useLoadChallenge(
+    getChallengeUrl('json', gameDateString)
+  )
 
   useCalculateCurrentAttemptIndex(
     melody.length,

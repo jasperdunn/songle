@@ -43,13 +43,12 @@ export class ErrorBoundary extends Component<
   }
 }
 
-const Container = styled.div`
+export const Container = styled.div`
   margin-left: 16px;
   margin-right: 16px;
   width: 300px;
 
   @media ${theme.breakpointUp.mobileLandscape} {
     margin: auto;
-    color: 'red';
   }
 `

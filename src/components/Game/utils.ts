@@ -8,6 +8,8 @@ import {
 import { findLastIndex } from 'common/utils'
 import { Attempt, Challenge, Melody } from 'components/Game/types'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { getErrorMessage } from 'common/error'
 
 export function validate(attempt: Attempt, melody: Melody): Attempt {
   const validatedAttempt: Attempt = []
@@ -122,32 +124,50 @@ export function getListenableAttemptIndex(
   return currentAttemptIndex - 1
 }
 
-export function getUrl(type: 'midi' | 'json'): string {
-  const gameDateString = new Date().toISOString().split('T')[0]
-  const timezoneOffset = (new Date().getTimezoneOffset() / 60) * -1
+export function getTimezoneOffset(date: Date): number {
+  return (date.getTimezoneOffset() / 60) * -1
+}
 
-  return `https://songle-wrangler.jasperdunn.workers.dev/${gameDateString}_${
-    type === 'midi' ? 0 : 1
+export function getLocalDateString(date: Date): string {
+  return new Date(date.setHours(getTimezoneOffset(date), 0, 0, 0))
+    .toJSON()
+    .split('T')[0]
+}
+
+export function getChallengeUrl(
+  type: 'midi' | 'json',
+  gameDateString: string
+): string {
+  const today = new Date()
+  const timezoneOffset = getTimezoneOffset(today)
+
+  return `https://songle-wrangler.jasperdunn.workers.dev/${gameDateString}.${
+    type === 'midi' ? 'mid' : 'json'
   }?timezoneOffset=${timezoneOffset}`
 }
 
-export function useLoadChallenge(): {
+export function useLoadChallenge(url: string): {
   challenge: Challenge | null
   loadingChallenge: boolean
 } {
   const [loadingChallenge, setLoadingChallenge] = useState(true)
   const [challenge, setChallenge] = useState<Challenge | null>(null)
+  const navigate = useNavigate()
 
   const loadChallenge = useCallback(async () => {
     try {
-      const response = await axios.get<Challenge>(getUrl('json'))
+      const response = await axios.get<Challenge>(url)
       setChallenge(response.data)
     } catch (error) {
-      console.error(error)
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        navigate('/not-found', { replace: true })
+      } else {
+        console.error(getErrorMessage(error))
+      }
     } finally {
       setLoadingChallenge(false)
     }
-  }, [])
+  }, [url, navigate])
 
   useEffect(() => {
     loadChallenge()

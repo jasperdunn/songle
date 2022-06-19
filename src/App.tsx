@@ -3,6 +3,10 @@ import styled, { createGlobalStyle } from 'styled-components'
 import { theme } from 'common/theme'
 import { Game } from 'components/Game'
 import { ErrorBoundary } from 'components/ErrorBoundary'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { NotFound } from 'components/NotFound'
+import { useEffect } from 'react'
+import { getLocalDateString } from 'components/Game/utils'
 
 const GlobalStyle = createGlobalStyle`
 ${normalizedStyles}
@@ -10,6 +14,15 @@ ${globalStyles}
 `
 
 export function App(): JSX.Element {
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (pathname === '/') {
+      navigate(getLocalDateString(new Date()), { replace: true })
+    }
+  }, [navigate, pathname])
+
   return (
     <>
       <GlobalStyle />
@@ -19,7 +32,11 @@ export function App(): JSX.Element {
         </Header>
         <Main>
           <ErrorBoundary>
-            <Game />
+            <Routes>
+              <Route path=":gameDateString" element={<Game />} />
+              <Route path="not-found" element={<NotFound />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </ErrorBoundary>
         </Main>
       </Layout>

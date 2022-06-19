@@ -3,6 +3,7 @@ import { usePreviousValue } from 'hooks/usePreviousValue'
 import { Melody, Note, NoteValue } from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MonoSynth, now, Part, start, Transport } from 'tone'
+import { getErrorMessage } from 'common/error'
 
 export function useMidiPlayer(
   srcUrl: string,
@@ -69,7 +70,7 @@ export function useMidiPlayer(
         midiRef.current.tracks[0].notes.map((note) => note.name as NoteValue)
       )
     } catch (error) {
-      console.error(error)
+      console.error(getErrorMessage(error))
     } finally {
       setLoading(false)
     }
