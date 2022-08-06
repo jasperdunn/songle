@@ -7,6 +7,10 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { NotFound } from 'components/NotFound'
 import { useEffect } from 'react'
 import { getLocalDateString } from 'components/Game/utils'
+import { FiHelpCircle } from 'react-icons/fi'
+import { Button } from 'components/Button'
+import { useLocalStorage } from 'common/storage'
+import { OnboardingModal } from 'components/OnboardingModal'
 
 const GlobalStyle = createGlobalStyle`
 ${normalizedStyles}
@@ -16,6 +20,7 @@ ${globalStyles}
 export function App(): JSX.Element {
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const [onBoarded, setOnBoarded] = useLocalStorage('onBoarded', false)
 
   useEffect(() => {
     if (pathname === '/') {
@@ -29,6 +34,14 @@ export function App(): JSX.Element {
       <Layout>
         <Header>
           <Title>songle</Title>
+          <Button
+            style={{ position: 'absolute', right: 0, top: 0 }}
+            onClick={() => setOnBoarded(false)}
+            variant="primary"
+            light
+          >
+            <FiHelpCircle size={28} />
+          </Button>
         </Header>
         <Main>
           <ErrorBoundary>
@@ -39,6 +52,7 @@ export function App(): JSX.Element {
             </Routes>
           </ErrorBoundary>
         </Main>
+        <OnboardingModal onBoarded={onBoarded} setOnBoarded={setOnBoarded} />
       </Layout>
     </>
   )

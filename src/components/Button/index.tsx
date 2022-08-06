@@ -1,9 +1,31 @@
 import { theme } from 'common/theme'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-export const Button = styled.button`
+type ButtonProps = {
+  variant: 'primary' | 'secondary'
+  light?: boolean
+}
+export const Button = styled.button<ButtonProps>`
   border: 0;
-  background-color: ${theme.color.secondary.background};
+  background-color: ${({ variant }) => {
+    switch (variant) {
+      case 'primary':
+        return css`
+          ${theme.color.primary.background}
+        `
+
+      case 'secondary':
+        return css`
+          ${theme.color.secondary.background}
+        `
+
+      default:
+        return
+    }
+  }};
+
+  color: ${({ light }) => (light ? theme.color.primary.foreground : '#000')};
+
   height: fit-content;
   width: fit-content;
   padding: 4px;

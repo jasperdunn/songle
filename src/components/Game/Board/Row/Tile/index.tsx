@@ -56,12 +56,12 @@ const Square = styled.div<SquareProps>`
 
       case 1:
         return css`
-          background-color: blue;
+          background-color: rgb(74, 74, 255);
         `
 
       case 2:
         return css`
-          background-color: green;
+          background-color: #ff8c00;
         `
 
       default:

@@ -7,7 +7,7 @@ import {
 } from 'components/Game/Keyboard/utils'
 import { useContext, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import { FiCircle, FiPlay, FiSkipBack, FiSquare } from 'react-icons/fi'
+import { FiCircle, FiDelete, FiPlay, FiSquare } from 'react-icons/fi'
 import { validate } from 'components/Game/utils'
 import { Button } from 'components/Button'
 import { Key } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
@@ -124,24 +124,38 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
       <Buttons>
         <Button
           id="keyBackspace"
+          variant="secondary"
           onClick={removeLastNote}
           type="button"
           title="backspace"
           disabled={gameIsOver || playing}
         >
-          <FiSkipBack size={48} color="black" />
+          <FiDelete size={48} color="black" />
         </Button>
         {playing ? (
-          <Button id="keySpace" onClick={stop} type="button" title="stop">
+          <Button
+            id="keySpace"
+            variant="secondary"
+            onClick={stop}
+            type="button"
+            title="stop"
+          >
             <FiSquare size={48} color="black" />
           </Button>
         ) : (
-          <Button id="keySpace" onClick={play} type="button" title="play">
+          <Button
+            id="keySpace"
+            variant="secondary"
+            onClick={play}
+            type="button"
+            title="play"
+          >
             <FiPlay size={48} color="black" />
           </Button>
         )}
         <Button
           id="keyEnter"
+          variant="secondary"
           onClick={attemptChallenge}
           type="submit"
           title="record"

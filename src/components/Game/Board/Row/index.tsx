@@ -14,7 +14,7 @@ export function Row({ attempt, listenable }: RowProps): JSX.Element {
   const availableTiles = Array.from(Array(melody.length).keys())
 
   return (
-    <Grid melodyLength={melody.length}>
+    <RowGrid melodyLength={melody.length}>
       {availableTiles.map((n) => {
         if (!attempt[n]) {
           return <Tile key={n} playing={listenable && notePlaying === n}></Tile>
@@ -31,14 +31,14 @@ export function Row({ attempt, listenable }: RowProps): JSX.Element {
           </Tile>
         )
       })}
-    </Grid>
+    </RowGrid>
   )
 }
 
-type GridProps = {
+type RowGridProps = {
   melodyLength: number
 }
-const Grid = styled.div<GridProps>`
+export const RowGrid = styled.div<RowGridProps>`
   display: grid;
   gap: 3px;
 

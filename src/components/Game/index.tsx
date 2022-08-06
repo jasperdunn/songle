@@ -104,6 +104,7 @@ export function Game(): JSX.Element {
         gameOverResult,
         notePlaying,
         playNote,
+        numberOfPossibleAttempts,
       }}
     >
       <Container>

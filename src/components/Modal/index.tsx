@@ -92,7 +92,7 @@ export function Modal({
 }
 
 const Dialog = styled(motion.div)`
-  background-color: hsl(0, 0%, 90%);
+  background-color: ${theme.color.secondary.background};
   width: 320px;
   padding: 16px;
   max-height: 80vh;
@@ -126,6 +126,15 @@ const Overlay = styled(motion.div)`
 const Content = styled.div`
   h1 {
     margin-top: 0;
+  }
+
+  p {
+    font-size: 18px;
+  }
+
+  hr {
+    border: none;
+    border-top: 2px solid black;
   }
 `
 const CloseButton = styled.button`

@@ -11,7 +11,7 @@ import {
 } from './utils.test-data'
 
 test.each(validateData)(
-  'validate - %# - $attempt',
+  'validate - %# - %j',
   ({ attempt, melody, expected }) => {
     const actual = validate(attempt, melody)
     expect(actual).toStrictEqual(expected)

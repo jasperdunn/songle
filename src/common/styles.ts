@@ -6,6 +6,30 @@ export const globalStyles = css`
   *::after {
     box-sizing: border-box;
   }
+
+  /* Firefox */
+  * {
+    scrollbar-width: 14px;
+    scrollbar-color: #1b3539 #23494f;
+  }
+
+  /* Chrome Edge etc. */
+  *::-webkit-scrollbar {
+    width: 14px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background-color: #23494f;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #1b3539;
+    border-radius: 20px;
+    border: 3px solid #23494f;
+    :hover {
+      background-color: #2e636d;
+    }
+  }
 `
 
 export const normalizedStyles = css`

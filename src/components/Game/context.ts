@@ -17,5 +17,6 @@ type GameContextType = {
   gameOverResult: GameOverResult | null
   notePlaying: number | null
   playNote: (note: NoteValue) => void
+  numberOfPossibleAttempts: number
 }
 export const GameContext = createContext({} as GameContextType)

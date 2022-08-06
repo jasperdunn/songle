@@ -5,6 +5,7 @@ type LocalStorage = {
   attempts: Attempt[]
   currentAttemptIndex: number
   gameOverResult: GameOverResult | null
+  onBoarded: boolean
 }
 
 export function getLocalStorage<K extends keyof LocalStorage>(
