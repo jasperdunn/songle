@@ -16,8 +16,10 @@ import {
 } from 'components/Game/utils'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-export function Game(): JSX.Element {
-  const numberOfPossibleAttempts = 6
+type GameProps = {
+  numberOfPossibleAttempts: number
+}
+export function Game({ numberOfPossibleAttempts }: GameProps): JSX.Element {
   const { pathname } = useLocation()
   const gameDateString = pathname.split('/')[1]
   const navigate = useNavigate()

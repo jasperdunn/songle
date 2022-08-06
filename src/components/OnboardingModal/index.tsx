@@ -1,22 +1,20 @@
 import { theme } from 'common/theme'
 import { RowGrid } from 'components/Game/Board/Row'
 import { Tile } from 'components/Game/Board/Row/Tile'
-import { GameContext } from 'components/Game/context'
 import { Modal } from 'components/Modal'
-import { useContext } from 'react'
 import { FiCircle, FiDelete, FiPlay } from 'react-icons/fi'
 import styled from 'styled-components'
 
 type OnboardingModalProps = {
   onBoarded: boolean
   setOnBoarded: (onBoarded: boolean) => void
+  numberOfPossibleAttempts: number
 }
 export function OnboardingModal({
   onBoarded,
   setOnBoarded,
+  numberOfPossibleAttempts,
 }: OnboardingModalProps): JSX.Element {
-  const { numberOfPossibleAttempts } = useContext(GameContext)
-
   return (
     <Modal
       isOpen={!onBoarded}

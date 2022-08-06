@@ -21,6 +21,7 @@ export function App(): JSX.Element {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [onBoarded, setOnBoarded] = useLocalStorage('onBoarded', false)
+  const numberOfPossibleAttempts = 6
 
   useEffect(() => {
     if (pathname === '/') {
@@ -46,13 +47,22 @@ export function App(): JSX.Element {
         <Main>
           <ErrorBoundary>
             <Routes>
-              <Route path=":gameDateString" element={<Game />} />
+              <Route
+                path=":gameDateString"
+                element={
+                  <Game numberOfPossibleAttempts={numberOfPossibleAttempts} />
+                }
+              />
               <Route path="not-found" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </ErrorBoundary>
         </Main>
-        <OnboardingModal onBoarded={onBoarded} setOnBoarded={setOnBoarded} />
+        <OnboardingModal
+          numberOfPossibleAttempts={numberOfPossibleAttempts}
+          onBoarded={onBoarded}
+          setOnBoarded={setOnBoarded}
+        />
       </Layout>
     </>
   )
