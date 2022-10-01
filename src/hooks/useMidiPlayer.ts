@@ -1,13 +1,14 @@
 import { Midi } from '@tonejs/midi'
 import { usePreviousValue } from 'hooks/usePreviousValue'
-import { Melody, Note, NoteValue } from 'components/Game/types'
+import { Melody, AttemptedNote, NoteName } from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { MonoSynth, now, Part, start, Transport } from 'tone'
+import { now, Part, start, Transport, Sampler } from 'tone'
 import { getErrorMessage } from 'common/error'
+import { getMedianNoteName } from 'components/Game/utils'
 
 export function useMidiPlayer(
   srcUrl: string,
-  notes: Note[] = []
+  notes: AttemptedNote[] = []
 ): {
   play: () => void
   stop: () => void
@@ -15,13 +16,13 @@ export function useMidiPlayer(
   playing: boolean
   notePlaying: number | null
   melody: Melody
-  playNote: (note: NoteValue) => void
+  playNote: (note: NoteName) => void
 } {
   const [loading, setLoading] = useState(true)
   const [playing, setPlaying] = useState(false)
   const [notePlaying, setNotePlaying] = useState<number | null>(null)
   const midiRef = useRef<Midi>()
-  const synthRef = useRef<MonoSynth>()
+  const samplerRef = useRef<Sampler>()
   const partRef = useRef<Part>()
   const previousNotes = usePreviousValue(notes)
   const [melody, setMelody] = useState<Melody>([])
@@ -44,9 +45,11 @@ export function useMidiPlayer(
         stop()
       }, midiRef.current.tracks[0].duration)
 
+      const medianNoteName = getMedianNoteName(midiRef.current.tracks[0].notes)
+
       partRef.current = new Part(
         (time, note) => {
-          synthRef.current?.triggerAttackRelease(
+          samplerRef.current?.triggerAttackRelease(
             note.name,
             note.duration,
             time,
@@ -58,7 +61,7 @@ export function useMidiPlayer(
         midiRef.current.tracks[0].notes.map((note, index) => {
           return {
             time: note.time + now(),
-            name: 'C1',
+            name: medianNoteName,
             velocity: note.velocity,
             duration: note.duration,
             index,
@@ -67,7 +70,7 @@ export function useMidiPlayer(
       ).start(0)
 
       setMelody(
-        midiRef.current.tracks[0].notes.map((note) => note.name as NoteValue)
+        midiRef.current.tracks[0].notes.map((note) => note.name as NoteName)
       )
     } catch (error) {
       console.error(getErrorMessage(error))
@@ -77,8 +80,43 @@ export function useMidiPlayer(
   }, [srcUrl])
 
   useEffect(() => {
-    if (!synthRef.current) {
-      setupSynth()
+    if (!samplerRef.current) {
+      samplerRef.current = new Sampler({
+        urls: {
+          A0: 'A0.mp3',
+          C1: 'C1.mp3',
+          'D#1': 'Ds1.mp3',
+          'F#1': 'Fs1.mp3',
+          A1: 'A1.mp3',
+          C2: 'C2.mp3',
+          'D#2': 'Ds2.mp3',
+          'F#2': 'Fs2.mp3',
+          A2: 'A2.mp3',
+          C3: 'C3.mp3',
+          'D#3': 'Ds3.mp3',
+          'F#3': 'Fs3.mp3',
+          A3: 'A3.mp3',
+          C4: 'C4.mp3',
+          'D#4': 'Ds4.mp3',
+          'F#4': 'Fs4.mp3',
+          A4: 'A4.mp3',
+          C5: 'C5.mp3',
+          'D#5': 'Ds5.mp3',
+          'F#5': 'Fs5.mp3',
+          A5: 'A5.mp3',
+          C6: 'C6.mp3',
+          'D#6': 'Ds6.mp3',
+          'F#6': 'Fs6.mp3',
+          A6: 'A6.mp3',
+          C7: 'C7.mp3',
+          'D#7': 'Ds7.mp3',
+          'F#7': 'Fs7.mp3',
+          A7: 'A7.mp3',
+          C8: 'C8.mp3',
+        },
+        release: 1,
+        baseUrl: 'https://songle-wrangler.jasperdunn.workers.dev/salamander/',
+      }).toDestination()
     }
 
     loadMidi()
@@ -97,7 +135,7 @@ export function useMidiPlayer(
 
     partRef.current = new Part(
       (time, note) => {
-        synthRef.current?.triggerAttackRelease(
+        samplerRef.current?.triggerAttackRelease(
           note.name,
           note.duration,
           time,
@@ -108,7 +146,7 @@ export function useMidiPlayer(
       },
       midiRef.current.tracks[0].notes.map((note, index) => ({
         time: note.time,
-        name: notes[index].value,
+        name: notes[index].name,
         velocity: note.velocity,
         duration: note.duration,
         index,
@@ -126,46 +164,6 @@ export function useMidiPlayer(
   //   })
   // }, 1000)
 
-  function setupSynth(): void {
-    synthRef.current = new MonoSynth({
-      volume: -8,
-      envelope: {
-        attack: 0,
-        attackCurve: 'linear',
-        decay: 0,
-        decayCurve: 'exponential',
-        release: 0.1,
-        releaseCurve: 'exponential',
-        sustain: 1,
-      },
-      filter: {
-        Q: 2,
-        detune: 0,
-        frequency: 2000,
-        gain: 0,
-        rolloff: -12,
-        type: 'lowpass',
-      },
-      filterEnvelope: {
-        attack: 0,
-        attackCurve: 'linear',
-        baseFrequency: 300,
-        decay: 1,
-        decayCurve: 'exponential',
-        exponent: 2,
-        octaves: 4,
-        release: 0.8,
-        releaseCurve: 'exponential',
-        sustain: 0,
-      },
-      oscillator: {
-        partialCount: 0,
-        phase: 0,
-        type: 'sawtooth',
-      },
-    }).toDestination()
-  }
-
   async function play(): Promise<void> {
     await start()
     Transport.start()
@@ -178,9 +176,9 @@ export function useMidiPlayer(
     setPlaying(false)
   }
 
-  function playNote(note: NoteValue): void {
-    // make the duration be as long as the user holds down the key
-    synthRef.current?.triggerAttackRelease(note, 0.5)
+  function playNote(note: NoteName): void {
+    // TODO make the duration be as long as the user holds down the key
+    samplerRef.current?.triggerAttackRelease(note, 0.5)
   }
 
   return { play, stop, loading, playing, notePlaying, melody, playNote }

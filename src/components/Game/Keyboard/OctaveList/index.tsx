@@ -1,5 +1,5 @@
 import { useCallback, useContext, useMemo } from 'react'
-import { NoteValue, Octave } from 'components/Game/types'
+import { NoteName, Octave } from 'components/Game/types'
 import { OctaveGroup } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
 import { GameContext } from 'components/Game/context'
 
@@ -16,14 +16,14 @@ export function OctaveList(): JSX.Element {
   const currentAttempt = attempts[currentAttemptIndex]
 
   const addNote = useCallback(
-    (note: NoteValue) => {
+    (note: NoteName) => {
       playNote(note)
 
       if (currentAttempt.length < melody.length) {
         setAttempts((state) => {
           const updatedAttempts = [...state]
           const updatedAttempt = [...currentAttempt]
-          updatedAttempt.push({ value: note })
+          updatedAttempt.push({ name: note })
 
           updatedAttempts[currentAttemptIndex] = updatedAttempt
 
@@ -55,16 +55,12 @@ export function OctaveList(): JSX.Element {
     if (octaves.length < 3) {
       const amendedOctaves = [...octaves]
 
-      for (let index = 0; index < octaves.length; index++) {
-        const octave = octaves[index]
+      if (amendedOctaves[0] > 0) {
+        amendedOctaves.unshift(amendedOctaves[0] - 1)
+      }
 
-        if (octave > 0) {
-          amendedOctaves.unshift(octave - 1)
-        }
-
-        if (octave < 8) {
-          amendedOctaves.push(octave + 1)
-        }
+      if (amendedOctaves[amendedOctaves.length - 1] < 8) {
+        amendedOctaves.push(amendedOctaves[amendedOctaves.length - 1] + 1)
       }
 
       octaves = amendedOctaves

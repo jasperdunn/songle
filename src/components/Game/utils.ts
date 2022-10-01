@@ -10,6 +10,7 @@ import { Attempt, Challenge, Melody } from 'components/Game/types'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { getErrorMessage } from 'common/error'
+import { Note } from '@tonejs/midi/dist/Note'
 
 export function validate(attempt: Attempt, melody: Melody): Attempt {
   const validatedAttempt: Attempt = []
@@ -18,9 +19,9 @@ export function validate(attempt: Attempt, melody: Melody): Attempt {
   for (let i = 0; i < attempt.length; i++) {
     const currentNote = attempt[i]
 
-    if (currentNote.value === melody[i]) {
+    if (currentNote.name === melody[i]) {
       currentNote.hint = 2
-    } else if (melody.includes(currentNote.value)) {
+    } else if (melody.includes(currentNote.name)) {
       currentNote.hint = 1
     } else {
       currentNote.hint = 0
@@ -40,7 +41,7 @@ export function validate(attempt: Attempt, melody: Melody): Attempt {
 
     const totalCorrectDuplicatesInAttempt = validatedAttempt.filter(
       (note, index) =>
-        index !== i && note.value === currentNote.value && note.hint === 2
+        index !== i && note.name === currentNote.name && note.hint === 2
     ).length
 
     if (totalCorrectDuplicatesInAttempt === 0) {
@@ -48,7 +49,7 @@ export function validate(attempt: Attempt, melody: Melody): Attempt {
     }
 
     const totalDuplicatesInMelody = melody.filter(
-      (noteValue) => noteValue === currentNote.value
+      (noteValue) => noteValue === currentNote.name
     ).length
 
     if (totalCorrectDuplicatesInAttempt === totalDuplicatesInMelody) {
@@ -124,26 +125,13 @@ export function getListenableAttemptIndex(
   return currentAttemptIndex - 1
 }
 
-export function getTimezoneOffset(date: Date): number {
-  return (date.getTimezoneOffset() / 60) * -1
-}
-
-export function getLocalDateString(date: Date): string {
-  return new Date(date.setHours(getTimezoneOffset(date), 0, 0, 0))
-    .toJSON()
-    .split('T')[0]
-}
-
 export function getChallengeUrl(
   type: 'midi' | 'json',
-  gameDateString: string
+  gameLevel: string
 ): string {
-  const today = new Date()
-  const timezoneOffset = getTimezoneOffset(today)
-
-  return `https://songle-wrangler.jasperdunn.workers.dev/${gameDateString}.${
+  return `https://songle-wrangler.jasperdunn.workers.dev/${gameLevel}.${
     type === 'midi' ? 'mid' : 'json'
-  }?timezoneOffset=${timezoneOffset}`
+  }`
 }
 
 export function useLoadChallenge(url: string): {
@@ -174,4 +162,24 @@ export function useLoadChallenge(url: string): {
   }, [loadChallenge])
 
   return { challenge, loadingChallenge }
+}
+
+function getDistinctSortedNotes(notes: Note[]): string[] {
+  return [...notes]
+    .sort((a, b) => {
+      if (a.octave === b.octave) {
+        return a.midi - b.midi
+      }
+
+      return a.octave - b.octave
+    })
+    .map((note) => note.name)
+    .filter((noteName, index, array) => array.indexOf(noteName) === index)
+}
+
+export function getMedianNoteName(notes: Note[]): string {
+  const sortedNoteNames = getDistinctSortedNotes(notes)
+  const middleIndex = Math.floor(sortedNoteNames.length / 2)
+
+  return sortedNoteNames[middleIndex]
 }

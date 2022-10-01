@@ -12,25 +12,34 @@ import {
   getChallengeUrl,
   useCalculateCurrentAttemptIndex,
   useLoadChallenge,
-  getLocalDateString,
 } from 'components/Game/utils'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useParams, Navigate } from 'react-router-dom'
 
-type GameProps = {
-  numberOfPossibleAttempts: number
-}
-export function Game({ numberOfPossibleAttempts }: GameProps): JSX.Element {
-  const { pathname } = useLocation()
-  const gameDateString = pathname.split('/')[1]
-  const navigate = useNavigate()
+export function Game({
+  numberOfPossibleAttempts,
+}: Pick<ValidatedGameProps, 'numberOfPossibleAttempts'>): JSX.Element | null {
+  const { gameLevel } = useParams()
 
-  if (
-    /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(gameDateString) ===
-    false
-  ) {
-    navigate(`/${getLocalDateString(new Date())}`, { replace: true })
+  if (gameLevel === undefined || /^\d{3}$/.test(gameLevel) === false) {
+    return <Navigate replace to="/not-found" />
   }
 
+  return (
+    <ValidatedGame
+      numberOfPossibleAttempts={numberOfPossibleAttempts}
+      gameLevel={gameLevel}
+    />
+  )
+}
+
+type ValidatedGameProps = {
+  numberOfPossibleAttempts: number
+  gameLevel: string
+}
+function ValidatedGame({
+  numberOfPossibleAttempts,
+  gameLevel,
+}: ValidatedGameProps): JSX.Element {
   const [attempts, setAttempts] = useState<Attempt[]>(() =>
     Array(numberOfPossibleAttempts).fill([])
   )
@@ -58,10 +67,10 @@ export function Game({ numberOfPossibleAttempts }: GameProps): JSX.Element {
     notePlaying,
     melody,
     playNote,
-  } = useMidiPlayer(getChallengeUrl('midi', gameDateString), listenableAttempt)
+  } = useMidiPlayer(getChallengeUrl('midi', gameLevel), listenableAttempt)
 
   const { challenge, loadingChallenge } = useLoadChallenge(
-    getChallengeUrl('json', gameDateString)
+    getChallengeUrl('json', gameLevel)
   )
 
   useCalculateCurrentAttemptIndex(
@@ -114,11 +123,11 @@ export function Game({ numberOfPossibleAttempts }: GameProps): JSX.Element {
           'loading...'
         ) : (
           <>
-            {/* {process.env.NODE_ENV === 'development' && ( */}
-            <button onClick={resetGame} type="button">
-              RESET GAME
-            </button>
-            {/* )} */}
+            {process.env.NODE_ENV === 'development' && (
+              <button onClick={resetGame} type="button">
+                RESET GAME
+              </button>
+            )}
             <Board />
             <Keyboard play={play} stop={stop} playing={playing} />
             <GameOverModal

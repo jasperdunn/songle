@@ -27,7 +27,7 @@ export function Row({ attempt, listenable }: RowProps): JSX.Element {
             hint={note.hint}
             playing={listenable && notePlaying === n}
           >
-            {note.value}
+            {note.name}
           </Tile>
         )
       })}

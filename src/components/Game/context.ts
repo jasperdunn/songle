@@ -2,7 +2,7 @@ import {
   GameOverResult,
   Attempt,
   Melody,
-  NoteValue,
+  NoteName,
 } from 'components/Game/types'
 import { createContext } from 'react'
 
@@ -16,7 +16,7 @@ type GameContextType = {
   endGame: (result: GameOverResult) => void
   gameOverResult: GameOverResult | null
   notePlaying: number | null
-  playNote: (note: NoteValue) => void
+  playNote: (note: NoteName) => void
   numberOfPossibleAttempts: number
 }
 export const GameContext = createContext({} as GameContextType)

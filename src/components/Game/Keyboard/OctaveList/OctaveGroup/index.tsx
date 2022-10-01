@@ -1,10 +1,10 @@
-import { NoteValue } from 'components/Game/types'
+import { NoteName } from 'components/Game/types'
 import styled, { css } from 'styled-components'
 import { Octave } from 'components/Game/types'
 
 type OctaveGroupProps = {
   octave: Octave
-  addNote: (note: NoteValue) => void
+  addNote: (note: NoteName) => void
   disabled: boolean
 }
 export function OctaveGroup({

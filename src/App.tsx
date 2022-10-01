@@ -3,14 +3,13 @@ import styled, { createGlobalStyle } from 'styled-components'
 import { theme } from 'common/theme'
 import { Game } from 'components/Game'
 import { ErrorBoundary } from 'components/ErrorBoundary'
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import { NotFound } from 'components/NotFound'
-import { useEffect } from 'react'
-import { getLocalDateString } from 'components/Game/utils'
-import { FiHelpCircle } from 'react-icons/fi'
+import { FiHelpCircle, FiGrid } from 'react-icons/fi'
 import { Button } from 'components/Button'
 import { useLocalStorage } from 'common/storage'
 import { OnboardingModal } from 'components/OnboardingModal'
+import { Challenges } from 'components/Challenges'
 
 const GlobalStyle = createGlobalStyle`
 ${normalizedStyles}
@@ -18,22 +17,23 @@ ${globalStyles}
 `
 
 export function App(): JSX.Element {
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
   const [onBoarded, setOnBoarded] = useLocalStorage('onBoarded', false)
+  const navigate = useNavigate()
   const numberOfPossibleAttempts = 6
-
-  useEffect(() => {
-    if (pathname === '/') {
-      navigate(getLocalDateString(new Date()), { replace: true })
-    }
-  }, [navigate, pathname])
 
   return (
     <>
       <GlobalStyle />
       <Layout>
         <Header>
+          <Button
+            style={{ position: 'absolute', left: 0, top: 0 }}
+            onClick={() => navigate('/challenges')}
+            variant="primary"
+            light
+          >
+            <FiGrid size={28} />
+          </Button>
           <Title>songle</Title>
           <Button
             style={{ position: 'absolute', right: 0, top: 0 }}
@@ -47,8 +47,10 @@ export function App(): JSX.Element {
         <Main>
           <ErrorBoundary>
             <Routes>
+              <Route path="/" element={<Challenges />} />
+              <Route path="challenges" element={<Challenges />} />
               <Route
-                path=":gameDateString"
+                path=":gameLevel"
                 element={
                   <Game numberOfPossibleAttempts={numberOfPossibleAttempts} />
                 }
