@@ -79,7 +79,7 @@ export function Modal({
               role="dialog"
             >
               <CloseButton onClick={onHide} type="button">
-                <FiX size={32} />
+                <FiX size={32} color="black" />
               </CloseButton>
               <Content>{children}</Content>
             </Dialog>
