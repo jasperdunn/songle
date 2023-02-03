@@ -2,12 +2,13 @@ import { useCallback, useContext, useMemo } from 'react'
 import { NoteName, Octave } from 'components/Game/types'
 import { OctaveGroup } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
 import { GameContext } from 'components/Game/context'
+import { clone } from 'common/utils'
 
 export function OctaveList(): JSX.Element {
   const {
     attempts,
     currentAttemptIndex,
-    setAttempts,
+    setGame,
     melody,
     gameOverResult,
     playNote,
@@ -20,18 +21,20 @@ export function OctaveList(): JSX.Element {
       playNote(note)
 
       if (currentAttempt.length < melody.length) {
-        setAttempts((state) => {
-          const updatedAttempts = [...state]
+        setGame((state) => {
+          const updatedGame = clone(state)
+          const updatedAttempts = [...updatedGame.attempts]
           const updatedAttempt = [...currentAttempt]
           updatedAttempt.push({ name: note })
 
           updatedAttempts[currentAttemptIndex] = updatedAttempt
+          updatedGame.attempts = updatedAttempts
 
-          return updatedAttempts
+          return updatedGame
         })
       }
     },
-    [currentAttempt, currentAttemptIndex, melody.length, playNote, setAttempts]
+    [currentAttempt, currentAttemptIndex, melody.length, playNote, setGame]
   )
 
   return useMemo(() => {

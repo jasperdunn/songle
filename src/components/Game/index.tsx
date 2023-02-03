@@ -3,24 +3,25 @@ import { GameContext } from 'components/Game/context'
 import { GameOverModal } from 'components/Game/GameOverModal'
 import { useMidiPlayer } from 'hooks/useMidiPlayer'
 import { Keyboard } from 'components/Game/Keyboard'
-import { Attempt, GameOverResult } from 'components/Game/types'
+import { GameOverResult } from 'components/Game/types'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { getLocalStorage, useLocalStorage } from 'common/storage'
 import {
   getListenableAttemptIndex,
   getChallengeUrl,
   useCalculateCurrentAttemptIndex,
   useLoadChallenge,
+  isGameLevelValid,
 } from 'components/Game/utils'
 import { useParams, Navigate } from 'react-router-dom'
+import { useCurrentGame } from 'components/Game/useCurrentGame'
 
 export function Game({
   numberOfPossibleAttempts,
 }: Pick<ValidatedGameProps, 'numberOfPossibleAttempts'>): JSX.Element | null {
   const { gameLevel } = useParams()
 
-  if (gameLevel === undefined || /^\d{3}$/.test(gameLevel) === false) {
+  if (gameLevel === undefined || !isGameLevelValid(gameLevel)) {
     return <Navigate replace to="/not-found" />
   }
 
@@ -40,25 +41,17 @@ function ValidatedGame({
   numberOfPossibleAttempts,
   gameLevel,
 }: ValidatedGameProps): JSX.Element {
-  const [attempts, setAttempts] = useState<Attempt[]>(() =>
+  const [game, setGame] = useCurrentGame(
+    gameLevel,
     Array(numberOfPossibleAttempts).fill([])
   )
-  const [gameOverResult, setGameOverResult] = useLocalStorage(
-    'gameOverResult',
-    null
-  )
-  const [currentAttemptIndex, setCurrentAttemptIndex] = useLocalStorage(
-    'currentAttemptIndex',
-    0
-  )
-
   const [modalIsOpen, setModalIsOpen] = useState(false)
 
   const listenableAttemptIndex = getListenableAttemptIndex(
-    currentAttemptIndex,
-    attempts
+    game.currentAttemptIndex,
+    game.attempts
   )
-  const listenableAttempt = attempts[listenableAttemptIndex]
+  const listenableAttempt = game.attempts[listenableAttemptIndex]
   const {
     loading: loadingMidi,
     play,
@@ -75,26 +68,22 @@ function ValidatedGame({
 
   useCalculateCurrentAttemptIndex(
     melody.length,
-    attempts,
+    game.attempts,
     numberOfPossibleAttempts,
-    setCurrentAttemptIndex
+    setGame
   )
 
   useEffect(() => {
-    const storedAttempts = getLocalStorage('attempts')
-    if (storedAttempts) {
-      setAttempts(storedAttempts)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (gameOverResult) {
+    if (game.gameOverResult) {
       setModalIsOpen(true)
     }
-  }, [gameOverResult])
+  }, [game.gameOverResult])
 
-  function endGame(result: GameOverResult): void {
-    setGameOverResult(result)
+  function endGame(gameOverResult: GameOverResult): void {
+    setGame((state) => ({
+      ...state,
+      gameOverResult,
+    }))
   }
 
   function resetGame(): void {
@@ -106,13 +95,12 @@ function ValidatedGame({
     <GameContext.Provider
       value={{
         listenableAttemptIndex,
-        currentAttemptIndex,
-        setCurrentAttemptIndex,
-        attempts,
-        setAttempts,
+        currentAttemptIndex: game.currentAttemptIndex,
+        setGame,
+        attempts: game.attempts,
         melody,
         endGame,
-        gameOverResult,
+        gameOverResult: game.gameOverResult,
         notePlaying,
         playNote,
         numberOfPossibleAttempts,
@@ -134,7 +122,7 @@ function ValidatedGame({
               challenge={challenge}
               onHide={() => setModalIsOpen(false)}
               isOpen={modalIsOpen}
-              gameOverResult={gameOverResult}
+              gameOverResult={game.gameOverResult}
             />
           </>
         )}

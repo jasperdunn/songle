@@ -11,8 +11,8 @@ import { FiCircle, FiDelete, FiPlay, FiSquare } from 'react-icons/fi'
 import { validate } from 'components/Game/utils'
 import { Button } from 'components/Button'
 import { Key } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
-import { setLocalStorage } from 'common/storage'
 import { OctaveList } from 'components/Game/Keyboard/OctaveList'
+import { clone } from 'common/utils'
 
 type KeyboardProps = {
   play: () => void
@@ -22,9 +22,8 @@ type KeyboardProps = {
 export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
   const {
     currentAttemptIndex,
-    setCurrentAttemptIndex,
+    setGame,
     attempts,
-    setAttempts,
     melody,
     endGame,
     gameOverResult,
@@ -38,28 +37,31 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
       return
     }
 
-    setAttempts((state) => {
-      const updatedAttempts = [...state]
+    setGame((state) => {
+      const updatedGame = clone(state)
+      const updatedAttempts = [...updatedGame.attempts]
       const updatedAttempt = [...currentAttempt]
       updatedAttempt.pop()
 
       updatedAttempts[currentAttemptIndex] = updatedAttempt
+      updatedGame.attempts = updatedAttempts
 
-      return updatedAttempts
+      return updatedGame
     })
-  }, [currentAttempt, currentAttemptIndex, setAttempts])
+  }, [currentAttempt, currentAttemptIndex, setGame])
 
   const attemptChallenge = useCallback(() => {
     if (currentAttempt.length === melody.length) {
       const updatedAttempt = validate(currentAttempt, melody)
 
-      setAttempts((state) => {
-        const updatedAttempts = [...state]
+      setGame((state) => {
+        const updatedGame = clone(state)
+        const updatedAttempts = [...updatedGame.attempts]
 
         updatedAttempts[currentAttemptIndex] = updatedAttempt
+        updatedGame.attempts = updatedAttempts
 
-        setLocalStorage('attempts', updatedAttempts)
-        return updatedAttempts
+        return updatedGame
       })
 
       if (updatedAttempt.every((note) => note.hint === 2)) {
@@ -68,7 +70,11 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
       }
 
       if (currentAttemptIndex < attempts.length - 1) {
-        setCurrentAttemptIndex((index) => index + 1)
+        setGame((game) => {
+          const updatedGame = { ...game }
+          updatedGame.currentAttemptIndex = game.currentAttemptIndex + 1
+          return updatedGame
+        })
       } else {
         endGame('lost')
       }
@@ -78,8 +84,7 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
     currentAttempt,
     currentAttemptIndex,
     melody,
-    setAttempts,
-    setCurrentAttemptIndex,
+    setGame,
     endGame,
   ])
 

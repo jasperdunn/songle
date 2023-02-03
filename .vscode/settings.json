@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["fmsquare", "harmonicity", "loglevel", "songle", "tonejs"]
+  "cSpell.words": ["fmsquare", "harmonicity", "loglevel", "songle", "tonejs"],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

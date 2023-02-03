@@ -7,7 +7,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import { NotFound } from 'components/NotFound'
 import { FiHelpCircle, FiGrid } from 'react-icons/fi'
 import { Button } from 'components/Button'
-import { useLocalStorage } from 'common/storage'
+import { useLocalStorage } from 'hooks/useStorage'
 import { OnboardingModal } from 'components/OnboardingModal'
 import { Challenges } from 'components/Challenges'
 

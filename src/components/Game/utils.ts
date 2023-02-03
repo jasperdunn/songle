@@ -11,6 +11,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { getErrorMessage } from 'common/error'
 import { Note } from '@tonejs/midi/dist/Note'
+import { Game } from 'components/Game/useCurrentGame'
 
 export function validate(attempt: Attempt, melody: Melody): Attempt {
   const validatedAttempt: Attempt = []
@@ -85,19 +86,20 @@ export function useCalculateCurrentAttemptIndex(
   melodyLength: number,
   attempts: Attempt[],
   numberOfPossibleAttempts: number,
-  setCurrentAttemptIndex: Dispatch<SetStateAction<number>>
+  setGame: Dispatch<SetStateAction<Game>>
 ): void {
   const updateCurrentAttemptIndex = useCallback(() => {
     if (melodyLength) {
-      setCurrentAttemptIndex(
-        calculateCurrentAttemptIndex(
+      setGame((state) => ({
+        ...state,
+        currentAttemptIndex: calculateCurrentAttemptIndex(
           attempts,
           melodyLength,
           numberOfPossibleAttempts
-        )
-      )
+        ),
+      }))
     }
-  }, [attempts, melodyLength, setCurrentAttemptIndex, numberOfPossibleAttempts])
+  }, [attempts, melodyLength, numberOfPossibleAttempts, setGame])
 
   useEffect(() => {
     updateCurrentAttemptIndex()
@@ -182,4 +184,8 @@ export function getMedianNoteName(notes: Note[]): string {
   const middleIndex = Math.floor(sortedNoteNames.length / 2)
 
   return sortedNoteNames[middleIndex]
+}
+
+export function isGameLevelValid(gameLevel: string): boolean {
+  return /^\d{3}$/.test(gameLevel)
 }
