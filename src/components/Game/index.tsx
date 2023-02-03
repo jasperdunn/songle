@@ -15,13 +15,14 @@ import {
 } from 'components/Game/utils'
 import { useParams, Navigate } from 'react-router-dom'
 import { useCurrentGame } from 'components/Game/useCurrentGame'
+import { removeLocalStorage } from 'hooks/useStorage'
 
 export function Game({
   numberOfPossibleAttempts,
 }: Pick<ValidatedGameProps, 'numberOfPossibleAttempts'>): JSX.Element | null {
   const { gameLevel } = useParams()
 
-  if (gameLevel === undefined || !isGameLevelValid(gameLevel)) {
+  if (!gameLevel || !isGameLevelValid(gameLevel)) {
     return <Navigate replace to="/not-found" />
   }
 
@@ -87,7 +88,7 @@ function ValidatedGame({
   }
 
   function resetGame(): void {
-    localStorage.clear()
+    removeLocalStorage('gameByLevel')
     window.location.reload()
   }
 
@@ -113,7 +114,7 @@ function ValidatedGame({
           <>
             {process.env.NODE_ENV === 'development' && (
               <button onClick={resetGame} type="button">
-                RESET GAME
+                RESET ALL GAMES
               </button>
             )}
             <Board />
