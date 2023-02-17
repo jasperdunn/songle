@@ -1,5 +1,5 @@
 import { useCallback, useContext, useMemo } from 'react'
-import { NoteName, Octave } from 'components/Game/types'
+import { ScientificNoteName, Octave } from 'components/Game/types'
 import { OctaveGroup } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
 import { GameContext } from 'components/Game/context'
 import { clone } from 'common/utils'
@@ -17,7 +17,7 @@ export function OctaveList(): JSX.Element {
   const currentAttempt = attempts[currentAttemptIndex]
 
   const addNote = useCallback(
-    (note: NoteName) => {
+    (note: ScientificNoteName) => {
       playNote(note)
 
       if (currentAttempt.length < melody.length) {

@@ -2,7 +2,7 @@ import {
   GameOverResult,
   Attempt,
   Melody,
-  NoteName,
+  ScientificNoteName,
 } from 'components/Game/types'
 import { Game } from 'components/Game/useCurrentGame'
 import { createContext } from 'react'
@@ -15,7 +15,7 @@ type GameContextType = {
   endGame: (result: GameOverResult) => void
   gameOverResult: GameOverResult | null
   notePlaying: number | null
-  playNote: (note: NoteName) => void
+  playNote: (note: ScientificNoteName) => void
   numberOfPossibleAttempts: number
   setGame: React.Dispatch<React.SetStateAction<Game>>
 }

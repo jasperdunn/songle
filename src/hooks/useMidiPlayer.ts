@@ -1,6 +1,10 @@
 import { Midi } from '@tonejs/midi'
 import { usePreviousValue } from 'hooks/usePreviousValue'
-import { Melody, AttemptedNote, NoteName } from 'components/Game/types'
+import {
+  Melody,
+  AttemptedNote,
+  ScientificNoteName,
+} from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { now, Part, start, Transport, Sampler } from 'tone'
 import { getErrorMessage } from 'common/error'
@@ -16,7 +20,7 @@ export function useMidiPlayer(
   playing: boolean
   notePlaying: number | null
   melody: Melody
-  playNote: (note: NoteName) => void
+  playNote: (note: ScientificNoteName) => void
 } {
   const [loading, setLoading] = useState(true)
   const [playing, setPlaying] = useState(false)
@@ -70,7 +74,9 @@ export function useMidiPlayer(
       ).start(0)
 
       setMelody(
-        midiRef.current.tracks[0].notes.map((note) => note.name as NoteName)
+        midiRef.current.tracks[0].notes.map(
+          (note) => note.name as ScientificNoteName
+        )
       )
     } catch (error) {
       console.error(getErrorMessage(error))
@@ -176,7 +182,7 @@ export function useMidiPlayer(
     setPlaying(false)
   }
 
-  function playNote(note: NoteName): void {
+  function playNote(note: ScientificNoteName): void {
     // TODO make the duration be as long as the user holds down the key
     samplerRef.current?.triggerAttackRelease(note, 0.5)
   }

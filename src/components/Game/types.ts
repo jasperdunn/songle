@@ -1,8 +1,9 @@
-type NaturalNote = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G'
-type SharpNote = 'A#' | 'C#' | 'D#' | 'F#' | 'G#'
-type FlatNote = 'Ab' | 'Bb' | 'Db' | 'Eb' | 'Gb'
+type NaturalNote = 'C' | 'D' | 'E' | 'F' | 'G' | 'A' | 'B'
+type SharpNote = 'C#' | 'D#' | 'F#' | 'G#' | 'A#'
+type FlatNote = 'Db' | 'Eb' | 'Gb' | 'Ab' | 'Bb'
+type NoteName = NaturalNote | SharpNote | FlatNote
 export type Octave = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
-export type NoteName = `${NaturalNote | SharpNote | FlatNote}${Octave}`
+export type ScientificNoteName = `${NoteName}${Octave}`
 
 export type Challenge = {
   title: string
@@ -22,11 +23,11 @@ export type NoteHint =
   | 2
 
 export type AttemptedNote = {
-  name: NoteName
+  name: ScientificNoteName
   hint?: NoteHint
 }
 
 export type Attempt = AttemptedNote[]
-export type Melody = NoteName[]
+export type Melody = ScientificNoteName[]
 
 export type GameOverResult = 'won' | 'lost'
