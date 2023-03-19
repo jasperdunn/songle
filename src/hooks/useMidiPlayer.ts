@@ -1,14 +1,13 @@
 import { Midi } from '@tonejs/midi'
 import { Melody, ScientificNoteName, Attempt } from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { now, Part, start, Transport, Sampler } from 'tone'
+import { Part, start, Transport, Sampler } from 'tone'
 import { getErrorMessage } from 'common/error'
 import { getMedianNoteName } from 'components/Game/utils'
 
 export function useMidiPlayer(
   srcUrl: string,
-  listenableAttempt: Attempt = [],
-  listenableAttemptIndex: number | null
+  listenableAttempt: Attempt = []
 ): {
   play: () => void
   stop: () => void
@@ -124,7 +123,10 @@ export function useMidiPlayer(
   }, [loadMidi])
 
   useEffect(() => {
-    if (listenableAttempt.length !== melody.length) {
+    if (
+      listenableAttempt.length === 0 ||
+      listenableAttempt.length !== melody.length
+    ) {
       return
     }
 

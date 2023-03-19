@@ -33,10 +33,6 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
   const currentAttempt = attempts[currentAttemptIndex]
 
   const removeLastNote = useCallback(() => {
-    if (currentAttempt.length === 0) {
-      return
-    }
-
     setGame((state) => {
       const updatedGame = clone(state)
       const updatedAttempts = [...updatedGame.attempts]
@@ -132,8 +128,8 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
           variant="secondary"
           onClick={removeLastNote}
           type="button"
-          title="backspace"
-          disabled={gameIsOver || playing}
+          title="Remove the last note"
+          disabled={gameIsOver || playing || currentAttempt.length === 0}
         >
           <FiDelete size={48} color="black" />
         </Button>
@@ -143,7 +139,7 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
             variant="secondary"
             onClick={stop}
             type="button"
-            title="stop"
+            title="Stop"
           >
             <FiSquare size={48} color="black" />
           </Button>
@@ -153,7 +149,7 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
             variant="secondary"
             onClick={play}
             type="button"
-            title="play"
+            title="Play"
           >
             <FiPlay size={48} color="black" />
           </Button>
@@ -163,8 +159,8 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
           variant="secondary"
           onClick={attemptChallenge}
           type="submit"
-          title="record"
-          disabled={gameIsOver}
+          title="Record"
+          disabled={gameIsOver || playing}
         >
           <FiCircle size={48} color="black" />
         </Button>

@@ -30,6 +30,7 @@ export function App(): JSX.Element {
             style={{ position: 'absolute', left: 0, top: 0 }}
             onClick={() => navigate('/challenges')}
             variant="primary"
+            title="Challenges"
             light
           >
             <FiGrid size={28} />
@@ -39,6 +40,7 @@ export function App(): JSX.Element {
             style={{ position: 'absolute', right: 0, top: 0 }}
             onClick={() => setOnBoarded(false)}
             variant="primary"
+            title="How to play"
             light
           >
             <FiHelpCircle size={28} />

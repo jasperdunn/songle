@@ -63,11 +63,7 @@ function ValidatedGame({
     notePlaying,
     melody,
     playNote,
-  } = useMidiPlayer(
-    getChallengeUrl('midi', gameLevel),
-    listenableAttempt,
-    listenableAttemptIndex
-  )
+  } = useMidiPlayer(getChallengeUrl('midi', gameLevel), listenableAttempt)
 
   const { challenge, loadingChallenge } = useLoadChallenge(
     getChallengeUrl('json', gameLevel)

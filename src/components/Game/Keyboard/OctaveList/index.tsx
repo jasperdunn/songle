@@ -37,8 +37,8 @@ export function OctaveList(): JSX.Element {
     [currentAttempt, currentAttemptIndex, melody.length, playNote, setGame]
   )
 
-  return useMemo(() => {
-    let octaves: number[] = []
+  const octaves = useMemo(() => {
+    let calculatedOctaves: number[] = []
 
     for (let index = 0; index < melody.length; index++) {
       const octave = parseInt(melody[index].replace(/\D/, ''))
@@ -47,39 +47,41 @@ export function OctaveList(): JSX.Element {
         !isNaN(octave) &&
         octave >= 0 &&
         octave <= 8 &&
-        !octaves.includes(octave)
+        !calculatedOctaves.includes(octave)
       ) {
-        octaves.push(octave)
+        calculatedOctaves.push(octave)
       }
     }
 
-    octaves.sort()
+    calculatedOctaves.sort()
 
-    if (octaves.length < 3) {
-      const amendedOctaves = [...octaves]
+    if (calculatedOctaves.length < 3) {
+      const extendedOctaves = [...calculatedOctaves]
 
-      if (amendedOctaves[0] > 0) {
-        amendedOctaves.unshift(amendedOctaves[0] - 1)
+      if (extendedOctaves[0] > 0) {
+        extendedOctaves.unshift(extendedOctaves[0] - 1)
       }
 
-      if (amendedOctaves[amendedOctaves.length - 1] < 8) {
-        amendedOctaves.push(amendedOctaves[amendedOctaves.length - 1] + 1)
+      if (extendedOctaves[extendedOctaves.length - 1] < 8) {
+        extendedOctaves.push(extendedOctaves[extendedOctaves.length - 1] + 1)
       }
 
-      octaves = amendedOctaves
+      calculatedOctaves = extendedOctaves
     }
 
-    return (
-      <>
-        {octaves.map((octave) => (
-          <OctaveGroup
-            key={octave}
-            octave={octave as Octave}
-            addNote={addNote}
-            disabled={!!gameOverResult}
-          />
-        ))}
-      </>
-    )
-  }, [addNote, gameOverResult, melody])
+    return calculatedOctaves
+  }, [melody])
+
+  return (
+    <>
+      {octaves.map((octave) => (
+        <OctaveGroup
+          key={octave}
+          octave={octave as Octave}
+          addNote={addNote}
+          disabled={!!gameOverResult}
+        />
+      ))}
+    </>
+  )
 }
