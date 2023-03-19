@@ -16,7 +16,8 @@ export function Board(): JSX.Element {
               <Row
                 key={index}
                 attempt={attempt}
-                listenable={index === listenableAttemptIndex}
+                noAttemptsYet={listenableAttemptIndex === null}
+                listenable={listenableAttemptIndex === index}
               />
             )
           }

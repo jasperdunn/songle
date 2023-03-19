@@ -1,12 +1,6 @@
 import { Attempt, GameOverResult } from 'components/Game/types'
 import { useLocalStorage } from 'hooks/useStorage'
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 export function useCurrentGame(
   gameLevel: string,

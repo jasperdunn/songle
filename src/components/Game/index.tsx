@@ -52,7 +52,9 @@ function ValidatedGame({
     game.currentAttemptIndex,
     game.attempts
   )
-  const listenableAttempt = game.attempts[listenableAttemptIndex]
+  const listenableAttempt =
+    listenableAttemptIndex === null ? [] : game.attempts[listenableAttemptIndex]
+
   const {
     loading: loadingMidi,
     play,
@@ -61,7 +63,11 @@ function ValidatedGame({
     notePlaying,
     melody,
     playNote,
-  } = useMidiPlayer(getChallengeUrl('midi', gameLevel), listenableAttempt)
+  } = useMidiPlayer(
+    getChallengeUrl('midi', gameLevel),
+    listenableAttempt,
+    listenableAttemptIndex
+  )
 
   const { challenge, loadingChallenge } = useLoadChallenge(
     getChallengeUrl('json', gameLevel)

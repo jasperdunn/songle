@@ -7,7 +7,7 @@
     "start": "vite",
     "test": "vitest",
     "test-ui": "vitest --ui",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "devtools": "pnpm exec scripts/devtools-html-mod.sh && pnpm dlx react-devtools",
     "depcheck": "pnpm dlx depcheck",
@@ -51,8 +51,8 @@
     "web-vitals": "^2.1.4"
   },
   "engines": {
-    "node": "^16.19.0",
-    "pnpm": "^6.32.11"
+    "node": "^16.19.1",
+    "pnpm": "^7.29.3"
   },
   "browserslist": {
     "production": [

@@ -199,13 +199,28 @@ export const validateData: ValidateParams[] = [
 type GetListenableAttemptIndexDataParams = {
   currentAttemptIndex: number
   attempts: Attempt[]
-  expected: number
+  expected: number | null
 }
 export const getListenableAttemptIndexData: GetListenableAttemptIndexDataParams[] =
   [
     {
       currentAttemptIndex: 0,
-      attempts: [[], []],
+      attempts: [[]],
+      expected: null,
+    },
+    {
+      currentAttemptIndex: 1,
+      attempts: [
+        [
+          { name: 'D1', hint: 2 },
+          { name: 'D1', hint: 2 },
+          { name: 'D#1', hint: 0 },
+        ],
+        [
+          { name: 'D1', hint: 2 },
+          { name: 'D1', hint: 2 },
+        ],
+      ],
       expected: 0,
     },
     {
@@ -221,7 +236,7 @@ export const getListenableAttemptIndexData: GetListenableAttemptIndexDataParams[
       expected: 0,
     },
     {
-      currentAttemptIndex: 1,
+      currentAttemptIndex: 2,
       attempts: [
         [
           { name: 'D1', hint: 2 },
@@ -233,6 +248,7 @@ export const getListenableAttemptIndexData: GetListenableAttemptIndexDataParams[
           { name: 'D1', hint: 2 },
           { name: 'D#1', hint: 0 },
         ],
+        [],
       ],
       expected: 1,
     },

@@ -8,7 +8,7 @@ import { Game } from 'components/Game/useCurrentGame'
 import { createContext } from 'react'
 
 type GameContextType = {
-  listenableAttemptIndex: number
+  listenableAttemptIndex: number | null
   currentAttemptIndex: number
   attempts: Attempt[]
   melody: Melody

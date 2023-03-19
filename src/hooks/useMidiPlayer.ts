@@ -1,10 +1,5 @@
 import { Midi } from '@tonejs/midi'
-import { usePreviousValue } from 'hooks/usePreviousValue'
-import {
-  Melody,
-  AttemptedNote,
-  ScientificNoteName,
-} from 'components/Game/types'
+import { Melody, ScientificNoteName, Attempt } from 'components/Game/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { now, Part, start, Transport, Sampler } from 'tone'
 import { getErrorMessage } from 'common/error'
@@ -12,7 +7,8 @@ import { getMedianNoteName } from 'components/Game/utils'
 
 export function useMidiPlayer(
   srcUrl: string,
-  notes: AttemptedNote[] = []
+  listenableAttempt: Attempt = [],
+  listenableAttemptIndex: number | null
 ): {
   play: () => void
   stop: () => void
@@ -28,7 +24,6 @@ export function useMidiPlayer(
   const midiRef = useRef<Midi>()
   const samplerRef = useRef<Sampler>()
   const partRef = useRef<Part>()
-  const previousNotes = usePreviousValue(notes)
   const [melody, setMelody] = useState<Melody>([])
 
   const loadMidi = useCallback(async () => {
@@ -64,7 +59,7 @@ export function useMidiPlayer(
         },
         midiRef.current.tracks[0].notes.map((note, index) => {
           return {
-            time: note.time + now(),
+            time: note.time,
             name: medianNoteName,
             velocity: note.velocity,
             duration: note.duration,
@@ -129,15 +124,13 @@ export function useMidiPlayer(
   }, [loadMidi])
 
   useEffect(() => {
-    if (
-      !midiRef.current ||
-      !partRef.current ||
-      notes.length !== midiRef.current.tracks[0].notes.length
-    ) {
+    if (listenableAttempt.length !== melody.length) {
       return
     }
 
-    partRef.current.clear()
+    if (partRef.current) {
+      partRef.current.clear()
+    }
 
     partRef.current = new Part(
       (time, note) => {
@@ -150,15 +143,15 @@ export function useMidiPlayer(
 
         setNotePlaying(note.index)
       },
-      midiRef.current.tracks[0].notes.map((note, index) => ({
+      midiRef.current?.tracks[0].notes.map((note, index) => ({
         time: note.time,
-        name: notes[index].name,
+        name: listenableAttempt[index].name,
         velocity: note.velocity,
         duration: note.duration,
         index,
       }))
     ).start(0)
-  }, [notes, previousNotes])
+  }, [listenableAttempt, melody.length])
 
   // setInterval(() => {
   //   console.log({
