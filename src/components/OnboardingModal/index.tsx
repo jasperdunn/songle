@@ -104,6 +104,33 @@ export function OnboardingModal({
       <p>
         The note <strong>F3</strong> is not in the melody.
       </p>
+      <hr />
+      <div>
+        <div style={{ marginBottom: '8px' }}>
+          <a
+            href="https://www.jasperdunn.com/"
+            style={{
+              color: 'black',
+            }}
+          >
+            Jasper Dunn
+          </a>{' '}
+          © 2023
+        </div>
+        <div>
+          Built with{' '}
+          <a
+            href="https://tonejs.github.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: 'black',
+            }}
+          >
+            Tone.js
+          </a>
+        </div>
+      </div>
     </Modal>
   )
 }
