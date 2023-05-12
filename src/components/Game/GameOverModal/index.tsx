@@ -19,7 +19,7 @@ export function GameOverModal({
   return (
     <Modal isOpen={isOpen} onHide={onHide}>
       {gameOverResult && <GameOverMessage gameOverResult={gameOverResult} />}
-      <Statistics />
+      {gameOverResult === 'won' && <Statistics />}
       {challenge && <TrackDetails challenge={challenge} />}
     </Modal>
   )
