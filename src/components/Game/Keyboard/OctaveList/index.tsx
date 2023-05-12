@@ -1,5 +1,9 @@
 import { useCallback, useContext, useMemo } from 'react'
-import { ScientificNoteName, Octave } from 'components/Game/types'
+import {
+  ScientificNoteName,
+  Octave,
+  AttemptedNote,
+} from 'components/Game/types'
 import { OctaveGroup } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
 import { GameContext } from 'components/Game/context'
 import { clone } from 'common/utils'
@@ -38,10 +42,10 @@ export function OctaveList(): JSX.Element {
   )
 
   const octaves = useMemo(() => {
-    let calculatedOctaves: number[] = []
+    let calculatedOctaves: Octave[] = []
 
     for (let index = 0; index < melody.length; index++) {
-      const octave = parseInt(melody[index].replace(/\D/, ''))
+      const octave: Octave = parseInt(melody[index].replace(/\D/, '')) as Octave
 
       if (
         !isNaN(octave) &&
@@ -59,11 +63,13 @@ export function OctaveList(): JSX.Element {
       const extendedOctaves = [...calculatedOctaves]
 
       if (extendedOctaves[0] > 0) {
-        extendedOctaves.unshift(extendedOctaves[0] - 1)
+        extendedOctaves.unshift((extendedOctaves[0] - 1) as Octave)
       }
 
       if (extendedOctaves[extendedOctaves.length - 1] < 8) {
-        extendedOctaves.push(extendedOctaves[extendedOctaves.length - 1] + 1)
+        extendedOctaves.push(
+          (extendedOctaves[extendedOctaves.length - 1] + 1) as Octave
+        )
       }
 
       calculatedOctaves = extendedOctaves
@@ -71,6 +77,47 @@ export function OctaveList(): JSX.Element {
 
     return calculatedOctaves
   }, [melody])
+
+  const getAttemptedNotesFromOctave = useCallback(
+    (octave: Octave) => {
+      const attemptedNotes: AttemptedNote[] = []
+
+      for (const attempt of attempts) {
+        for (const note of attempt) {
+          if (note.name.includes(`${octave}`)) {
+            const existingNote = attemptedNotes.find(
+              (n) => n.name === note.name
+            )
+
+            if (!existingNote) {
+              attemptedNotes.push(note)
+            } else if ((note.hint || 0) > (existingNote.hint || 0)) {
+              attemptedNotes.splice(
+                attemptedNotes.indexOf(existingNote),
+                1,
+                note
+              )
+            }
+          }
+        }
+      }
+
+      return attemptedNotes
+    },
+    [attempts]
+  )
+
+  const attemptedNotesPerOctave = useMemo(() => {
+    const hints: Partial<Record<Octave, AttemptedNote[]>> = {}
+
+    for (let i = 0; i < octaves.length; i++) {
+      const octave = octaves[i]
+
+      hints[octave] = getAttemptedNotesFromOctave(octave)
+    }
+
+    return hints
+  }, [getAttemptedNotesFromOctave, octaves])
 
   return (
     <>
@@ -80,6 +127,7 @@ export function OctaveList(): JSX.Element {
           octave={octave as Octave}
           addNote={addNote}
           disabled={!!gameOverResult}
+          attemptedNotes={attemptedNotesPerOctave[octave] || []}
         />
       ))}
     </>

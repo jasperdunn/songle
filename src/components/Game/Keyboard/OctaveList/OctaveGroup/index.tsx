@@ -1,125 +1,83 @@
-import { ScientificNoteName } from 'components/Game/types'
+import {
+  AttemptedNote,
+  ScientificNoteName,
+  NoteName,
+} from 'components/Game/types'
 import styled, { css } from 'styled-components'
 import { Octave } from 'components/Game/types'
+import { theme } from 'common/theme'
 
 type OctaveGroupProps = {
   octave: Octave
   addNote: (note: ScientificNoteName) => void
   disabled: boolean
+  attemptedNotes: AttemptedNote[]
 }
 export function OctaveGroup({
   octave,
   addNote,
   disabled,
+  attemptedNotes,
 }: OctaveGroupProps): JSX.Element {
+  const keys: Key[] = [
+    { type: 'white', note: 'C' },
+    { type: 'black', note: 'C#' },
+    { type: 'white', note: 'D', offset: true },
+    { type: 'black', note: 'D#' },
+    { type: 'white', note: 'E', offset: true },
+    { type: 'white', note: 'F' },
+    { type: 'black', note: 'F#' },
+    { type: 'white', note: 'G', offset: true },
+    { type: 'black', note: 'G#' },
+    { type: 'white', note: 'A', offset: true },
+    { type: 'black', note: 'A#' },
+    { type: 'white', note: 'B', offset: true },
+  ]
+
   return (
     <>
-      <WhiteKey
-        id="keyC"
-        onClick={() => addNote(`C${octave}`)}
-        type="button"
-        disabled={disabled}
-      >
-        C
-      </WhiteKey>
-      <BlackKey
-        id="keyC#"
-        onClick={() => addNote(`C#${octave}`)}
-        type="button"
-        disabled={disabled}
-      >
-        C#
-      </BlackKey>
-      <WhiteKey
-        id="keyD"
-        onClick={() => addNote(`D${octave}`)}
-        type="button"
-        disabled={disabled}
-        $offset
-      >
-        D
-      </WhiteKey>
-      <BlackKey
-        id="keyD#"
-        onClick={() => addNote(`D#${octave}`)}
-        type="button"
-        disabled={disabled}
-      >
-        D#
-      </BlackKey>
-      <WhiteKey
-        id="keyE"
-        onClick={() => addNote(`E${octave}`)}
-        type="button"
-        disabled={disabled}
-        $offset
-      >
-        E
-      </WhiteKey>
-      <WhiteKey
-        id="keyF"
-        onClick={() => addNote(`F${octave}`)}
-        type="button"
-        disabled={disabled}
-      >
-        F
-      </WhiteKey>
-      <BlackKey
-        id="keyF#"
-        onClick={() => addNote(`F#${octave}`)}
-        type="button"
-        disabled={disabled}
-      >
-        F#
-      </BlackKey>
-      <WhiteKey
-        id="keyG"
-        onClick={() => addNote(`G${octave}`)}
-        type="button"
-        disabled={disabled}
-        $offset
-      >
-        G
-      </WhiteKey>
-      <BlackKey
-        id="keyG#"
-        onClick={() => addNote(`G#${octave}`)}
-        type="button"
-        disabled={disabled}
-      >
-        G#
-      </BlackKey>
-      <WhiteKey
-        id="keyA"
-        onClick={() => addNote(`A${octave}`)}
-        type="button"
-        disabled={disabled}
-        $offset
-      >
-        A
-      </WhiteKey>
-      <BlackKey
-        id="keyA#"
-        onClick={() => addNote(`A#${octave}`)}
-        type="button"
-        disabled={disabled}
-      >
-        A#
-      </BlackKey>
-      <WhiteKey
-        id="keyB"
-        onClick={() => addNote(`B${octave}`)}
-        type="button"
-        disabled={disabled}
-        $offset
-      >
-        B
-      </WhiteKey>
+      {keys.map(({ type, note, offset = false }) => {
+        const scientificNoteName: ScientificNoteName = `${note}${octave}`
+        const id: KeyId = `key${scientificNoteName}`
+        const hint = attemptedNotes.find(
+          (n) => n.name === scientificNoteName
+        )?.hint
+        const disabledKey = disabled || hint === 0
+
+        return type === 'white' ? (
+          <WhiteKey
+            key={id}
+            id={id}
+            onClick={() => addNote(scientificNoteName)}
+            type="button"
+            disabled={disabledKey}
+            $offset={offset}
+            $hint={hint}
+          >
+            {disabledKey ? null : note}
+          </WhiteKey>
+        ) : (
+          <BlackKey
+            key={id}
+            id={id}
+            onClick={() => addNote(scientificNoteName)}
+            type="button"
+            disabled={disabledKey}
+            $hint={hint}
+          >
+            {disabledKey ? null : note}
+          </BlackKey>
+        )
+      })}
     </>
   )
 }
 
-export const Key = styled.button`
+type KeyBaseProps = {
+  id: `key${ScientificNoteName}`
+  $hint?: number
+}
+export const KeyBase = styled.button<KeyBaseProps>`
   position: relative;
   float: left;
   display: flex;
@@ -136,7 +94,7 @@ export const Key = styled.button`
 type WhiteKeyProps = {
   $offset?: boolean
 }
-const WhiteKey = styled(Key)<WhiteKeyProps>`
+const WhiteKey = styled(KeyBase)<WhiteKeyProps>`
   height: 12.5rem;
   width: 2.5rem;
   border-left: 1px solid hsl(0, 0%, 73%);
@@ -163,9 +121,42 @@ const WhiteKey = styled(Key)<WhiteKeyProps>`
     css`
       margin: 0 0 0 -1rem;
     `}
+
+  ${({ $hint }) => {
+    switch ($hint) {
+      case 0:
+        return css`
+          background-color: ${theme.color.primary.background};
+          filter: brightness(0.5);
+        `
+
+      case 1:
+        return css`
+          background: linear-gradient(
+            to bottom,
+            hsl(0, 0%, 91%) 0%,
+            rgb(74, 74, 255) 100%
+          );
+          color: var(--black-60);
+        `
+
+      case 2:
+        return css`
+          background: linear-gradient(
+            to bottom,
+            hsl(0, 0%, 91%) 0%,
+            #ff8c00 100%
+          );
+          color: var(--black-60);
+        `
+
+      default:
+        return
+    }
+  }}
 `
 
-const BlackKey = styled(Key)`
+const BlackKey = styled(KeyBase)`
   height: 8rem;
   width: 2rem;
   margin: 0 0 0 -1rem;
@@ -188,4 +179,45 @@ const BlackKey = styled(Key)`
     );
     outline: none;
   }
+
+  ${({ $hint }) => {
+    switch ($hint) {
+      case 0:
+        return css`
+          background-color: ${theme.color.primary.background};
+          filter: brightness(0.5);
+        `
+
+      case 1:
+        return css`
+          background: linear-gradient(
+            to bottom,
+            hsl(0, 0%, 91%) 0%,
+            rgb(74, 74, 255) 100%
+          );
+          color: var(--black-60);
+        `
+
+      case 2:
+        return css`
+          background: linear-gradient(
+            to bottom,
+            hsl(0, 0%, 91%) 0%,
+            #ff8c00 100%
+          );
+          color: var(--black-60);
+        `
+
+      default:
+        return
+    }
+  }}
 `
+
+type Key = {
+  type: 'white' | 'black'
+  note: NoteName
+  offset?: boolean
+}
+
+type KeyId = `key${ScientificNoteName}`

@@ -23,10 +23,6 @@ export function OnboardingModal({
       }}
     >
       <h1>How to play</h1>
-      <small>
-        Please wear headphones to prevent spoiling the challenge for other
-        players.
-      </small>
       <p>Guess the melody in {numberOfPossibleAttempts} tries.</p>
       <p>
         First, press play{' '}
@@ -107,10 +103,6 @@ export function OnboardingModal({
       </SmallRowGrid>
       <p>
         The note <strong>F3</strong> is not in the melody.
-      </p>
-      <hr />
-      <p>
-        A new <strong>songle</strong> will be available each day!
       </p>
     </Modal>
   )

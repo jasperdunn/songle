@@ -16,6 +16,7 @@ import {
 import { useParams, Navigate } from 'react-router-dom'
 import { useCurrentGame } from 'components/Game/useCurrentGame'
 import { removeLocalStorage } from 'hooks/useStorage'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export function Game({
   numberOfPossibleAttempts,
@@ -109,13 +110,45 @@ function ValidatedGame({
         numberOfPossibleAttempts,
       }}
     >
-      <Container>
+      <AnimatePresence>
         {loadingMidi || loadingChallenge ? (
-          'loading...'
+          <Container
+            key="loading"
+            initial="show"
+            exit="hide"
+            variants={{
+              show: {
+                opacity: 1,
+              },
+              hide: {
+                opacity: 0,
+                transition: { ease: 'easeIn', duration: 0.35 },
+              },
+            }}
+          >
+            <div style={{ marginTop: '10px' }}>loading...</div>
+          </Container>
         ) : (
-          <>
+          <Container
+            key="game"
+            initial="hide"
+            animate="show"
+            variants={{
+              show: {
+                opacity: 1,
+                transition: { ease: 'easeInOut', duration: 1 },
+              },
+              hide: {
+                opacity: 0,
+              },
+            }}
+          >
             {process.env.NODE_ENV === 'development' && (
-              <button onClick={resetGame} type="button">
+              <button
+                style={{ marginTop: '10px' }}
+                onClick={resetGame}
+                type="button"
+              >
                 RESET ALL GAMES
               </button>
             )}
@@ -127,14 +160,14 @@ function ValidatedGame({
               isOpen={modalIsOpen}
               gameOverResult={game.gameOverResult}
             />
-          </>
+          </Container>
         )}
-      </Container>
+      </AnimatePresence>
     </GameContext.Provider>
   )
 }
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   height: 100%;
   display: flex;
   flex-direction: column;

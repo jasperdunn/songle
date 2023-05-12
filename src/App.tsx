@@ -3,7 +3,7 @@ import styled, { createGlobalStyle } from 'styled-components'
 import { theme } from 'common/theme'
 import { Game } from 'components/Game'
 import { ErrorBoundary } from 'components/ErrorBoundary'
-import { Route, Routes, useNavigate } from 'react-router-dom'
+import { Link, Route, Routes } from 'react-router-dom'
 import { NotFound } from 'components/NotFound'
 import { FiHelpCircle, FiGrid } from 'react-icons/fi'
 import { Button } from 'components/Button'
@@ -18,7 +18,6 @@ ${globalStyles}
 
 export function App(): JSX.Element {
   const [onBoarded, setOnBoarded] = useLocalStorage('onBoarded', false)
-  const navigate = useNavigate()
   const numberOfPossibleAttempts = 6
 
   return (
@@ -26,15 +25,9 @@ export function App(): JSX.Element {
       <GlobalStyle />
       <Layout>
         <Header>
-          <Button
-            style={{ position: 'absolute', left: 0, top: 0 }}
-            onClick={() => navigate('/challenges')}
-            variant="primary"
-            title="Challenges"
-            light
-          >
+          <ChallengesLink to="/challenges" title="Challenges">
             <FiGrid size={28} />
-          </Button>
+          </ChallengesLink>
           <Title>songle</Title>
           <Button
             style={{ position: 'absolute', right: 0, top: 0 }}
@@ -108,4 +101,23 @@ const Title = styled.h1`
 const Main = styled.div`
   grid-area: main;
   background-color: ${theme.color.secondary.background};
+`
+
+const ChallengesLink = styled(Link)`
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  padding: 4px;
+  color: ${theme.color.primary.foreground};
+  background-color: ${theme.color.primary.background};
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.2);
+  }
+
+  &.active:not(:disabled),
+  &:active:not(:disabled) {
+    filter: brightness(1.4);
+  }
 `

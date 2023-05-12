@@ -10,7 +10,7 @@ import styled from 'styled-components'
 import { FiCircle, FiDelete, FiPlay, FiSquare } from 'react-icons/fi'
 import { validate } from 'components/Game/utils'
 import { Button } from 'components/Button'
-import { Key } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
+import { KeyBase } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
 import { OctaveList } from 'components/Game/Keyboard/OctaveList'
 import { clone } from 'common/utils'
 
@@ -203,11 +203,11 @@ const Keys = styled.div`
   display: flex;
   justify-content: center;
 
-  ${Key}:first-child {
+  ${KeyBase}:first-child {
     border-radius: 5px 0 5px 5px;
   }
 
-  ${Key}:last-child {
+  ${KeyBase}:last-child {
     border-radius: 0 5px 5px 5px;
   }
 

@@ -51,7 +51,7 @@ export function Modal({
           variants={{
             show: {
               opacity: 1,
-              transition: { ease: 'easeOut', duration: 0.35 },
+              transition: { ease: 'easeInOut', duration: 0.45 },
             },
             hide: {
               opacity: 0,
@@ -69,7 +69,7 @@ export function Modal({
               variants={{
                 slideUp: {
                   translateY: '0%',
-                  transition: { ease: 'easeOut', duration: 0.35 },
+                  transition: { ease: 'easeInOut', duration: 0.45 },
                 },
                 slideDown: {
                   translateY: '200%',
