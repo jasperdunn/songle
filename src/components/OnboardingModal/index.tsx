@@ -1,7 +1,9 @@
 import { theme } from 'common/theme'
+import { Button } from 'components/Button'
 import { RowGrid } from 'components/Game/Board/Row'
 import { Tile } from 'components/Game/Board/Row/Tile'
 import { Modal } from 'components/Modal'
+import { removeLocalStorage } from 'hooks/useStorage'
 import { FiCircle, FiDelete, FiPlay } from 'react-icons/fi'
 import styled from 'styled-components'
 
@@ -15,6 +17,22 @@ export function OnboardingModal({
   setOnBoarded,
   numberOfPossibleAttempts,
 }: OnboardingModalProps): JSX.Element {
+  function confirmResetGame(): void {
+    if (
+      // eslint-disable-next-line no-alert
+      window.confirm(
+        'Are you sure you want to reset all data?\nThis will delete all your progress and challenges.'
+      )
+    ) {
+      resetGame()
+    }
+  }
+
+  function resetGame(): void {
+    removeLocalStorage('gameByLevel')
+    window.location.reload()
+  }
+
   return (
     <Modal
       isOpen={!onBoarded}
@@ -105,6 +123,15 @@ export function OnboardingModal({
         The note <strong>F3</strong> is not in the melody.
       </p>
       <hr />
+      <ResetButton
+        variant="primary"
+        light
+        type="button"
+        onClick={confirmResetGame}
+      >
+        Reset all data
+      </ResetButton>
+      <hr />
       <div>
         <div style={{ marginBottom: '8px' }}>
           <a
@@ -141,4 +168,8 @@ const SmallRowGrid = styled(RowGrid)`
   @media ${theme.breakpointUp.tablet} {
     width: 320px;
   }
+`
+
+const ResetButton = styled(Button)`
+  padding: 8px;
 `

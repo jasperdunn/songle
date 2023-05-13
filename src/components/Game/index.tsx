@@ -15,7 +15,6 @@ import {
 } from 'components/Game/utils'
 import { useParams, Navigate } from 'react-router-dom'
 import { useCurrentGame } from 'components/Game/useCurrentGame'
-import { removeLocalStorage } from 'hooks/useStorage'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export function Game({
@@ -90,11 +89,6 @@ function ValidatedGame({
     }))
   }
 
-  function resetGame(): void {
-    removeLocalStorage('gameByLevel')
-    window.location.reload()
-  }
-
   return (
     <GameContext.Provider
       value={{
@@ -143,15 +137,6 @@ function ValidatedGame({
               },
             }}
           >
-            {process.env.NODE_ENV === 'development' && (
-              <button
-                style={{ marginTop: '10px' }}
-                onClick={resetGame}
-                type="button"
-              >
-                RESET ALL GAMES
-              </button>
-            )}
             <Board />
             <Keyboard play={play} stop={stop} playing={playing} />
             <GameOverModal
