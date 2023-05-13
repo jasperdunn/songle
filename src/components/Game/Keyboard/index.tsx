@@ -5,7 +5,7 @@ import {
   keyUp,
   clickButton,
 } from 'components/Game/Keyboard/utils'
-import { useContext, useEffect, useCallback } from 'react'
+import { useContext, useEffect, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { FiCircle, FiDelete, FiPlay, FiSquare } from 'react-icons/fi'
 import { validate } from 'components/Game/utils'
@@ -13,6 +13,7 @@ import { Button } from 'components/Button'
 import { KeyBase } from 'components/Game/Keyboard/OctaveList/OctaveGroup'
 import { OctaveList } from 'components/Game/Keyboard/OctaveList'
 import { clone } from 'common/utils'
+import { usePreviousValue } from 'hooks/usePreviousValue'
 
 type KeyboardProps = {
   play: () => void
@@ -28,9 +29,16 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
     endGame,
     gameOverResult,
   } = useContext(GameContext)
-
   const gameIsOver = gameOverResult !== null
   const currentAttempt = attempts[currentAttemptIndex]
+  const [won, setWon] = useState(false)
+  const prevPlaying = usePreviousValue(playing)
+
+  useEffect(() => {
+    if (!gameIsOver && won && prevPlaying && !playing) {
+      endGame('won')
+    }
+  }, [won, playing, endGame, gameIsOver, prevPlaying])
 
   const removeLastNote = useCallback(() => {
     setGame((state) => {
@@ -61,7 +69,8 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
       })
 
       if (updatedAttempt.every((note) => note.hint === 2)) {
-        endGame('won')
+        play()
+        setWon(true)
         return
       }
 
@@ -82,6 +91,7 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
     melody,
     setGame,
     endGame,
+    play,
   ])
 
   useEffect(() => {
