@@ -121,6 +121,8 @@ export function OnboardingModal({
       </SmallRowGrid>
       <p>
         The note <strong>F3</strong> is not in the melody.
+        <br />
+        Or there are no available correct spots left for this note.
       </p>
       <hr />
       <ResetButton
