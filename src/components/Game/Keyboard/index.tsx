@@ -176,9 +176,11 @@ export function Keyboard({ play, stop, playing }: KeyboardProps): JSX.Element {
         </Button>
       </Buttons>
       <Container>
-        <Keys>
-          <OctaveList />
-        </Keys>
+        <ScrollHelper>
+          <Keys>
+            <OctaveList />
+          </Keys>
+        </ScrollHelper>
       </Container>
     </>
   )
@@ -190,6 +192,15 @@ const Container = styled.div`
   overflow-x: auto;
   padding: 0 16px;
   justify-content: center;
+`
+
+/**
+ * Horizontal scrolling was getting cut off on smaller screens.
+ */
+const ScrollHelper = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  width: 100%;
 `
 
 const Buttons = styled.div`
@@ -211,7 +222,8 @@ const Keys = styled.div`
   user-select: none;
   height: 204px;
   display: flex;
-  justify-content: center;
+  // occupy the second column
+  grid-column: 2;
 
   ${KeyBase}:first-child {
     border-radius: 5px 0 5px 5px;
