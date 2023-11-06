@@ -5,7 +5,7 @@ https://songle.app
 ## Guess the melody!
 
 1. Press play to hear the rhythm of a popular tune.
-2. Enter the notes on the keyboard in the right order.
+2. Enter the notes on the piano in the right order.
 3. After each attempt, the color of the tiles will change to show how close your guess was.
    
 ## Controls
