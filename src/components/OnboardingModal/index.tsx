@@ -51,7 +51,7 @@ export function OnboardingModal({
         />{' '}
         to hear the rhythm of a popular tune.
       </p>
-      <p>Press the notes on the keyboard in the right order.</p>
+      <p>Enter the notes on the piano in the right order.</p>
       <p>
         After each attempt, the color of the tiles will change to show how close
         your guess was.
