@@ -163,14 +163,14 @@ export function OnboardingModal({
         </div>
         <div>
           <a
-            href="https://icons8.com/icon/85639/musical-notes"
+            href="https://icons8.com/icon/85639/musical-note"
             target="_blank"
             rel="noopener noreferrer"
             style={{
               color: 'black',
             }}
           >
-            Icon
+            Musical Note icon
           </a>{' '}by{' '}
           <a
             href="https://icons8.com"
