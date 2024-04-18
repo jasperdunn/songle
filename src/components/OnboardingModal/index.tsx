@@ -138,25 +138,50 @@ export function OnboardingModal({
         <div style={{ marginBottom: '8px' }}>
           <a
             href="https://www.jasperdunn.com/"
+            target="_blank"
+            rel="noopener"
             style={{
               color: 'black',
             }}
           >
             Jasper Dunn
           </a>{' '}
-          © 2023
+          © {new Date().getFullYear()}
         </div>
         <div>
           Built with{' '}
           <a
             href="https://tonejs.github.io"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
             style={{
               color: 'black',
             }}
           >
             Tone.js
+          </a>
+        </div>
+        <div>
+          <a
+            href="https://icons8.com/icon/85639/musical-notes"
+            target="_blank"
+            rel="noopener"
+            style={{
+              color: 'black',
+            }}
+          >
+            Musical Notes
+          </a>{' '}
+          icon by{' '}
+          <a
+            href="https://icons8.com"
+            target="_blank"
+            rel="noopener"
+            style={{
+              color: 'black',
+            }}
+          >
+            Icons8
           </a>
         </div>
       </div>
