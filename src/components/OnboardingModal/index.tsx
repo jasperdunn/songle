@@ -139,7 +139,7 @@ export function OnboardingModal({
           <a
             href="https://www.jasperdunn.com/"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             style={{
               color: 'black',
             }}
@@ -153,7 +153,7 @@ export function OnboardingModal({
           <a
             href="https://tonejs.github.io"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             style={{
               color: 'black',
             }}
@@ -165,18 +165,17 @@ export function OnboardingModal({
           <a
             href="https://icons8.com/icon/85639/musical-notes"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             style={{
               color: 'black',
             }}
           >
-            Musical Notes
-          </a>{' '}
-          icon by{' '}
+            Icon
+          </a>{' '}by{' '}
           <a
             href="https://icons8.com"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             style={{
               color: 'black',
             }}
