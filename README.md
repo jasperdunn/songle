@@ -1,6 +1,6 @@
 # songle
 
-https://songle.app
+https://songle.jasperdunn.com
 
 ## Guess the melody!
 
